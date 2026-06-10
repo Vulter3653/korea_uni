@@ -191,7 +191,7 @@ git diff --check
 
 ## Limitations
 
-- While market data collection succeeded, regression outputs and placebo checks failed to estimate due to a CIK padding mismatch that prevented joining the market outcomes with the AI text measures. No causal inference is currently possible.
+- The earlier CIK padding / event-key merge issue has been repaired. The final regression pipeline now links AI communication variables to market-reaction outcomes, producing a 273-row analysis dataset, 21 regression coefficient rows, and 9 placebo coefficient rows. These outputs are association estimates, not standalone proof of causal effects.
 - AI disclosure measures are text-based communication proxies, not direct AI adoption measures.
 - Topic labels are machine-generated/topic-derived labels, not human-validated coding.
 - Sector categories are approximate SEC SIC-derived NAICS enrichment, not fully verified firm-level NAICS classifications.
