@@ -1,0 +1,105 @@
+name: Update Fortune 2025 Top 100 Final Manifest
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: "Original Top 100 collection run ID"
+        required: true
+        default: "27272856688"
+        type: string
+      commit_csv_to_repo:
+        description: "Commit final manifest/audit/summary CSV to repository"
+        required: true
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  update-final-manifest:
+    name: Update final Top 100 10-K manifest
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate required input CSVs
+        run: |
+          test -f "data/processed/fortune2025_top100_10k_run_${{ inputs.source_run_id }}_combined_manifest.csv"
+          test -f "data/audit/fortune2025_top100_10k_run_${{ inputs.source_run_id }}_combined_audit.csv"
+          test -f "data/processed/fortune2025_top100_major_missing_recollection_manifest.csv"
+          test -f "data/audit/fortune2025_top100_major_missing_recollection_audit.csv"
+
+      - name: Update final manifest with recollection results
+        run: |
+          python scripts/update_top100_manifest_with_recollection.py \
+            --source-run-id "${{ inputs.source_run_id }}"
+
+      - name: Validate final outputs
+        run: |
+          test -f data/processed/fortune2025_top100_10k_final_manifest.csv
+          test -f data/audit/fortune2025_top100_10k_final_audit.csv
+          test -f data/audit/fortune2025_top100_10k_final_update_summary.csv
+          echo "Final manifest lines including header:"
+          wc -l data/processed/fortune2025_top100_10k_final_manifest.csv
+          echo "Final audit lines including header:"
+          wc -l data/audit/fortune2025_top100_10k_final_audit.csv
+          echo "Final update summary:"
+          cat data/audit/fortune2025_top100_10k_final_update_summary.csv
+          python - <<'PY'
+          import csv
+          from collections import Counter
+          rows = list(csv.DictReader(open('data/processed/fortune2025_top100_10k_final_manifest.csv', encoding='utf-8')))
+          counts = Counter(row.get('download_status') for row in rows)
+          print(f"Rows: {len(rows)}")
+          print(f"Status counts: {dict(counts)}")
+          if len(rows) != 300:
+              raise SystemExit(f"Expected 300 final rows, found {len(rows)}")
+          if counts.get('success', 0) != 273:
+              raise SystemExit(f"Expected 273 final success rows, found {counts.get('success', 0)}")
+          PY
+
+      - name: Commit final CSV outputs to repository
+        if: ${{ inputs.commit_csv_to_repo == 'true' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            data/processed/fortune2025_top100_10k_final_manifest.csv \
+            data/audit/fortune2025_top100_10k_final_audit.csv \
+            data/audit/fortune2025_top100_10k_final_update_summary.csv
+          if git diff --cached --quiet; then
+            echo "No final CSV changes to commit."
+          else
+            git commit -m "data: add final fortune top100 10-k manifest"
+            git push
+          fi
+
+      - name: Upload final CSV outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: fortune2025-top100-10k-final-csv
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            data/processed/fortune2025_top100_10k_final_manifest.csv
+            data/audit/fortune2025_top100_10k_final_audit.csv
+            data/audit/fortune2025_top100_10k_final_update_summary.csv
