@@ -43,6 +43,26 @@ Abnormal returns are summed over event windows. Abnormal volume is computed as a
 | Market data collector | `scripts/collect_market_data_for_10k_event_study.py` |
 | External market source | yfinance, with Stooq CSV fallback in the collector |
 
+## Local Market Data Fallback
+
+If network access to `yfinance` or `Stooq` is blocked in your environment, you can use the local CSV fallback mechanism by placing data in the raw directories:
+
+**Directory Structure:**
+```text
+data/raw/market_data/prices/<TICKER>.csv
+data/raw/market_data/benchmarks/<BENCHMARK>.csv
+```
+
+**Required Schema (case-insensitive column names):**
+- **Firm price file:** `date, close, adj_close, volume` (plus open, high, low if available)
+- **Benchmark file:** `date, close, adj_close, volume`
+
+**Processing Rules:**
+- The script automatically checks these directories before attempting to download.
+- `TICKER` must match the yfinance ticker (e.g., `BRK-B.csv` instead of `BRK.B.csv`).
+- If `adj_close` is missing, `close` will be used as a fallback.
+- If `volume` is missing, abnormal volume calculation will fail, but CARs will still be calculated.
+
 The current run attempted to collect market data, but the environment returned no usable firm or benchmark price data. Therefore CAR, abnormal volume, and regression outputs are generated as transparent failed/not-estimated diagnostics, not as empirical findings.
 
 ## Sample Construction

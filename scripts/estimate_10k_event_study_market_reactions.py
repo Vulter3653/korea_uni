@@ -35,7 +35,7 @@ VOLUME_WINDOWS = {
     "AbnormalVolume_0_p5": (0, 5),
     "AbnormalVolume_m5_m2": (-5, -2),
 }
-MIN_ESTIMATION_N = 120
+MIN_ESTIMATION_N = 60
 
 ESTIMATE_FIELDS = [
     "event_id", "ticker", "company", "filing_date", "event_trading_date", "market_benchmark",
