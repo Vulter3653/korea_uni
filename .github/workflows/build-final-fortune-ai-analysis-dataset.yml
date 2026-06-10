@@ -1,0 +1,108 @@
+name: Build Final Fortune AI Analysis Dataset
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_outputs_to_repo:
+        description: "Commit final analysis datasets to repository"
+        required: true
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-final-analysis-dataset:
+    name: Build final Fortune 2025 AI analysis datasets
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate required inputs
+        run: |
+          test -f data/processed/fortune2025_top100_10k_report_linked_with_industry.csv
+          test -f data/processed/fortune2025_top100_k5_ai_topic_analysis_dataset.csv
+
+      - name: Build final AI analysis datasets
+        run: |
+          python scripts/build_final_fortune2025_ai_analysis_dataset.py
+
+      - name: Validate final outputs
+        run: |
+          test -f data/processed/fortune2025_top100_final_ai_analysis_master.csv
+          test -f data/processed/fortune2025_top100_final_ai_analysis_text_sample.csv
+          test -f data/processed/fortune2025_top100_final_ai_analysis_k5_topic_sample.csv
+          test -f data/audit/fortune2025_top100_final_ai_analysis_dataset_summary.csv
+          echo "Final dataset summary:"
+          cat data/audit/fortune2025_top100_final_ai_analysis_dataset_summary.csv
+          python - <<'PY'
+          import csv
+          checks = [
+              ('data/processed/fortune2025_top100_final_ai_analysis_master.csv', 300),
+              ('data/processed/fortune2025_top100_final_ai_analysis_text_sample.csv', 273),
+              ('data/processed/fortune2025_top100_final_ai_analysis_k5_topic_sample.csv', 246),
+          ]
+          for path, expected in checks:
+              rows = list(csv.DictReader(open(path, encoding='utf-8')))
+              print(path, len(rows))
+              if len(rows) != expected:
+                  raise SystemExit(f"{path}: expected {expected}, found {len(rows)}")
+              required = [
+                  'naics_sector_code',
+                  'AI_NegativeSensitive_Topic_Share',
+                  'AI_Infrastructure_Topic_Share',
+                  'AI_Negative_Orientation',
+                  'is_primary_text_sample',
+                  'is_k5_topic_sample',
+              ]
+              missing = [col for col in required if col not in rows[0]]
+              if missing:
+                  raise SystemExit(f"{path}: missing columns {missing}")
+          PY
+
+      - name: Commit final analysis datasets to repository
+        if: ${{ inputs.commit_outputs_to_repo == 'true' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            data/processed/fortune2025_top100_final_ai_analysis_master.csv \
+            data/processed/fortune2025_top100_final_ai_analysis_text_sample.csv \
+            data/processed/fortune2025_top100_final_ai_analysis_k5_topic_sample.csv \
+            data/audit/fortune2025_top100_final_ai_analysis_dataset_summary.csv
+          if git diff --cached --quiet; then
+            echo "No final analysis dataset changes to commit."
+          else
+            git commit -m "data: add final fortune ai analysis datasets"
+            git push
+          fi
+
+      - name: Upload final analysis datasets
+        uses: actions/upload-artifact@v4
+        with:
+          name: fortune2025-final-ai-analysis-datasets
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            data/processed/fortune2025_top100_final_ai_analysis_master.csv
+            data/processed/fortune2025_top100_final_ai_analysis_text_sample.csv
+            data/processed/fortune2025_top100_final_ai_analysis_k5_topic_sample.csv
+            data/audit/fortune2025_top100_final_ai_analysis_dataset_summary.csv
