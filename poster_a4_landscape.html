@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Corporate AI Communication and Capital Market Response - Poster</title>
+  <style>
+    @page {
+      size: A4 landscape;
+      margin: 10mm;
+    }
+
+    :root {
+      --ink: #111827;
+      --muted: #4b5563;
+      --line: #d1d5db;
+      --bg: #e5e7eb;
+      --card: #ffffff;
+      --navy: #0f172a;
+      --blue: #2563eb;
+      --green: #15803d;
+      --amber: #b45309;
+      --slate: #334155;
+      --soft-blue: #eff6ff;
+      --soft-green: #ecfdf5;
+      --soft-amber: #fffbeb;
+      --soft-slate: #f8fafc;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      font-family: Inter, Arial, sans-serif;
+      color: var(--ink);
+    }
+
+    .poster {
+      width: 297mm;
+      min-height: 210mm;
+      margin: 0 auto;
+      background: white;
+      color: #111827;
+      box-sizing: border-box;
+      padding: 12mm;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    .poster-header {
+      display: grid;
+      grid-template-columns: 1fr 58mm;
+      gap: 8mm;
+      align-items: start;
+      margin-bottom: 5mm;
+      padding-bottom: 4mm;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--blue);
+      font-weight: 800;
+      margin-bottom: 2mm;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.08;
+      color: var(--navy);
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      margin: 1.5mm 0 0;
+      font-size: 10.5px;
+      line-height: 1.35;
+      color: var(--muted);
+      max-width: 170mm;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 3mm;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 8.5px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--soft-slate);
+      color: var(--slate);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .pill.blue {
+      background: var(--soft-blue);
+      color: #1d4ed8;
+      border-color: #bfdbfe;
+    }
+
+    .pill.green {
+      background: var(--soft-green);
+      color: #166534;
+      border-color: #bbf7d0;
+    }
+
+    .pill.amber {
+      background: var(--soft-amber);
+      color: #92400e;
+      border-color: #fde68a;
+    }
+
+    .qr-box {
+      width: 58mm;
+      min-height: 58mm;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      padding: 5mm;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 2mm;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .qr-box::before {
+      content: "";
+      position: absolute;
+      inset: 4mm;
+      border-radius: 8px;
+      background:
+        linear-gradient(90deg, rgba(15, 23, 42, 0.10) 1px, transparent 1px) 0 0 / 4mm 4mm,
+        linear-gradient(rgba(15, 23, 42, 0.10) 1px, transparent 1px) 0 0 / 4mm 4mm;
+      opacity: 0.65;
+      mask:
+        linear-gradient(#000 0 0) center / 100% 100% no-repeat;
+    }
+
+    .qr-box::after {
+      content: "";
+      position: absolute;
+      inset: 8mm;
+      border-radius: 6px;
+      border: 1px solid rgba(17, 24, 39, 0.18);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.86));
+    }
+
+    .qr-box > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .qr-box strong {
+      font-size: 11px;
+      color: var(--navy);
+      margin-top: 1mm;
+    }
+
+    .qr-box span {
+      font-size: 8.5px;
+      color: var(--muted);
+      line-height: 1.25;
+    }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3.5mm;
+      margin: 4mm 0 5mm;
+    }
+
+    .kpi {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 4mm 4.5mm;
+      background: var(--card);
+    }
+
+    .kpi .value {
+      display: block;
+      font-size: 18px;
+      line-height: 1;
+      font-weight: 900;
+      color: var(--navy);
+      margin-bottom: 1.2mm;
+    }
+
+    .kpi .label {
+      font-size: 8.6px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 1mm;
+      color: var(--slate);
+    }
+
+    .kpi .desc {
+      font-size: 8.4px;
+      line-height: 1.3;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      gap: 3.5mm;
+    }
+
+    .three-cols {
+      grid-template-columns: repeat(3, 1fr);
+      align-items: start;
+    }
+
+    .column {
+      display: grid;
+      gap: 3.5mm;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--card);
+      padding: 4mm;
+      box-shadow: 0 1px 0 rgba(15, 23, 42, 0.03);
+    }
+
+    .card h2 {
+      margin: 0 0 2mm;
+      font-size: 12px;
+      line-height: 1.2;
+      color: var(--navy);
+    }
+
+    .card h3 {
+      margin: 0 0 1.5mm;
+      font-size: 10.5px;
+      line-height: 1.25;
+      color: var(--navy);
+    }
+
+    .card p,
+    .card li {
+      font-size: 8.6px;
+      line-height: 1.38;
+      color: var(--ink);
+      margin: 0;
+    }
+
+    .card ul {
+      margin: 1.5mm 0 0 4mm;
+      padding: 0;
+    }
+
+    .card li + li {
+      margin-top: 1mm;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 2px 7px;
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 2mm;
+      border: 1px solid transparent;
+    }
+
+    .tag.blue {
+      background: var(--soft-blue);
+      border-color: #bfdbfe;
+      color: #1d4ed8;
+    }
+
+    .tag.green {
+      background: var(--soft-green);
+      border-color: #bbf7d0;
+      color: #166534;
+    }
+
+    .tag.amber {
+      background: var(--soft-amber);
+      border-color: #fde68a;
+      color: #92400e;
+    }
+
+    .tag.slate {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      color: #334155;
+    }
+
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5mm;
+      font-size: 8.2px;
+    }
+
+    .mini-table th,
+    .mini-table td {
+      padding: 2mm 2mm;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .mini-table th {
+      font-size: 7.8px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--slate);
+      background: #f8fafc;
+    }
+
+    .mini-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .takeaway {
+      border-top: 1px solid var(--line);
+      margin-top: 4mm;
+      padding-top: 3.5mm;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 4mm;
+      align-items: end;
+    }
+
+    .takeaway p {
+      margin: 0;
+      font-size: 9px;
+      line-height: 1.35;
+      color: var(--muted);
+    }
+
+    .takeaway .strong {
+      font-size: 11px;
+      line-height: 1.35;
+      color: var(--navy);
+      font-weight: 800;
+      max-width: 100mm;
+    }
+
+    footer {
+      margin-top: 3mm;
+      font-size: 7.8px;
+      color: #6b7280;
+      display: flex;
+      justify-content: space-between;
+      gap: 8mm;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 2mm;
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .poster {
+        width: auto;
+        min-height: auto;
+        margin: 0;
+        box-shadow: none;
+      }
+    }
+
+    @media (max-width: 1180px) {
+      .poster {
+        width: 100%;
+      }
+
+      .poster-header,
+      .kpi-row,
+      .three-cols,
+      .takeaway {
+        grid-template-columns: 1fr;
+      }
+
+      .qr-box {
+        width: 100%;
+        min-height: 44mm;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="poster">
+    <header class="poster-header">
+      <div>
+        <div class="eyebrow">Poster Presentation · Final Submission</div>
+        <h1>Corporate AI Communication and Capital Market Response</h1>
+        <p class="subtitle">A 10-K filing event study of Fortune 2025 Top 100 firms, focused on how AI-related disclosure proxies relate to short-window market reactions around the filing date.</p>
+        <div class="meta-row">
+          <span class="pill blue">Event date: 10-K filing_date</span>
+          <span class="pill green">Dashboard: Event-study evidence</span>
+          <span class="pill amber">Printable A4 landscape</span>
+          <span class="pill">Validation: FINAL VERDICT PASS</span>
+        </div>
+      </div>
+      <div class="qr-box" aria-label="Dashboard QR placeholder">
+        <!-- Replace this placeholder with a QR image if a public dashboard URL is available. -->
+        <strong>Scan Dashboard</strong>
+        <span>QR Placeholder</span>
+        <span>ai_adoption_news_dashboard.html</span>
+      </div>
+    </header>
+
+    <section class="kpi-row" aria-label="Key project facts">
+      <article class="kpi">
+        <span class="value">273</span>
+        <div class="label">Observed Events</div>
+        <div class="desc">Observed 10-K text events used as event-study candidates.</div>
+      </article>
+      <article class="kpi">
+        <span class="value">272</span>
+        <div class="label">Market Data</div>
+        <div class="desc">Events with sufficient market data for event-study estimation.</div>
+      </article>
+      <article class="kpi">
+        <span class="value">21</span>
+        <div class="label">Regression Rows</div>
+        <div class="desc">Coefficient rows in the regression summary output.</div>
+      </article>
+      <article class="kpi">
+        <span class="value">9</span>
+        <div class="label">Placebo Rows</div>
+        <div class="desc">Pre-filing placebo coefficient rows in the diagnostics output.</div>
+      </article>
+    </section>
+
+    <section class="grid three-cols" aria-label="Poster content">
+      <div class="column">
+        <article class="card">
+          <span class="tag blue">Question</span>
+          <h2>Research Question</h2>
+          <p>Do firms' AI-related 10-K disclosures relate to abnormal capital-market reactions around the 10-K filing date?</p>
+        </article>
+
+        <article class="card">
+          <span class="tag green">Design</span>
+          <h2>Event-Study Design</h2>
+          <ul>
+            <li>Sample: Fortune 2025 Top 100 firms</li>
+            <li>Event date: 10-K filing_date</li>
+            <li>Estimation window: [-250, -30] trading days</li>
+            <li>CAR windows: [-1,+1], [0,+1], [0,+3], [0,+5]</li>
+            <li>Abnormal volume windows: [0,+1], [0,+3], [0,+5]</li>
+            <li>Benchmark: US500 first, then SPY / ^GSPC / IVV / VOO where available</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <span class="tag slate">Pipeline</span>
+          <h2>Data Pipeline</h2>
+          <ul>
+            <li>Observed 10-K text events: 273</li>
+            <li>Events with sufficient market data: 272</li>
+            <li>Analysis dataset rows: 273</li>
+            <li>Regression coefficient rows: 21</li>
+            <li>Placebo coefficient rows: 9</li>
+            <li>Validation script: FINAL VERDICT: PASS</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="column">
+        <article class="card">
+          <span class="tag amber">Measures</span>
+          <h2>AI Communication Measures</h2>
+          <p><strong>AI communication proxies:</strong></p>
+          <ul>
+            <li>AI_Related_Disclosure_Intensity</li>
+            <li>AI_RiskRelated_Topic_Share</li>
+            <li>AI_Risk_Orientation_Proxy</li>
+          </ul>
+          <p style="margin-top: 2mm;"><strong>Market outcomes:</strong> Cumulative Abnormal Returns and Abnormal Volume.</p>
+          <p style="margin-top: 2mm;">These are text-based communication proxies, not direct observations of actual AI adoption.</p>
+        </article>
+
+        <article class="card">
+          <span class="tag blue">Evidence</span>
+          <h2>Descriptive Evidence</h2>
+          <p>Average short-window CARs are small and slightly positive. Abnormal volume is elevated around the filing window. The [0,+1] abnormal-volume window has mean 0.6070.</p>
+          <table class="mini-table" aria-label="Descriptive statistics">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Mean</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>CAR_m1_p1</td><td>0.0030</td></tr>
+              <tr><td>CAR_0_p1</td><td>0.0031</td></tr>
+              <tr><td>CAR_0_p3</td><td>0.0028</td></tr>
+              <tr><td>CAR_0_p5</td><td>0.0024</td></tr>
+              <tr><td>AbnormalVolume_0_p1</td><td>0.6070</td></tr>
+              <tr><td>AbnormalVolume_0_p3</td><td>0.4614</td></tr>
+              <tr><td>AbnormalVolume_0_p5</td><td>0.3704</td></tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="card">
+          <span class="tag green">Regression</span>
+          <h2>Regression Evidence</h2>
+          <ul>
+            <li>N = 272 usable observations</li>
+            <li>21 regression coefficient rows</li>
+            <li>Firm FE + Year FE when feasible</li>
+            <li>Firm-clustered standard errors where feasible</li>
+            <li>No statistically significant short-window CAR association detected for the AI disclosure variables in the current sample</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="column">
+        <article class="card">
+          <span class="tag amber">Placebo</span>
+          <h2>Placebo / Diagnostics</h2>
+          <ul>
+            <li>Pre-filing placebo windows: CAR_m10_m6, CAR_m5_m2, AbnormalVolume_m5_m2</li>
+            <li>9 placebo coefficient rows</li>
+            <li>merged_rows = 273</li>
+            <li>Placebo checks support, but do not prove, the event-window interpretation</li>
+          </ul>
+          <table class="mini-table" aria-label="Diagnostics summary">
+            <thead>
+              <tr>
+                <th>Diagnostic</th>
+                <th>Rows</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Model diagnostics</td><td>10</td></tr>
+              <tr><td>Merge diagnostics</td><td>1</td></tr>
+              <tr><td>Usable regression sample</td><td>272</td></tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="card">
+          <span class="tag slate">Takeaway</span>
+          <h2>Takeaway</h2>
+          <p>10-K filings appear to attract market attention, especially through abnormal trading volume. However, AI-specific disclosure variation does not systematically explain short-window abnormal returns in the current design.</p>
+          <p style="margin-top: 2mm;">This is event-window association evidence, not standalone proof of an AI-specific causal effect.</p>
+        </article>
+
+        <article class="card">
+          <span class="tag blue">Context</span>
+          <h2>Submission Context</h2>
+          <p>The poster is consistent with the dashboard, README, and validation outputs already in the repository. It is designed to print as a compact A4 landscape summary board or be saved as PDF from a browser.</p>
+        </article>
+      </div>
+    </section>
+
+    <footer>
+      <span>Corporate AI Communication and Capital Market Response</span>
+      <span>Poster board generated from repository-contained outputs only</span>
+    </footer>
+  </main>
+</body>
+</html>
