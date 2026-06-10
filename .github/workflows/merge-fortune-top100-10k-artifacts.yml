@@ -1,0 +1,118 @@
+name: Merge Fortune 2025 Top 100 10-K Artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: "Workflow run ID containing the four Top 100 chunk artifacts"
+        required: true
+        default: "27272856688"
+        type: string
+      artifact_name_1:
+        description: "Chunk 1 artifact name"
+        required: true
+        default: "fortune2025-top100-10k-chunk-1"
+        type: string
+      artifact_name_2:
+        description: "Chunk 2 artifact name"
+        required: true
+        default: "fortune2025-top100-10k-chunk-2"
+        type: string
+      artifact_name_3:
+        description: "Chunk 3 artifact name"
+        required: true
+        default: "fortune2025-top100-10k-chunk-3"
+        type: string
+      artifact_name_4:
+        description: "Chunk 4 artifact name"
+        required: true
+        default: "fortune2025-top100-10k-chunk-4"
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  merge-top100-artifacts:
+    name: Merge Top 100 10-K chunk artifacts
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Download chunk 1 artifact
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.source_run_id }}
+          name: ${{ inputs.artifact_name_1 }}
+          path: artifacts/${{ inputs.artifact_name_1 }}
+
+      - name: Download chunk 2 artifact
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.source_run_id }}
+          name: ${{ inputs.artifact_name_2 }}
+          path: artifacts/${{ inputs.artifact_name_2 }}
+
+      - name: Download chunk 3 artifact
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.source_run_id }}
+          name: ${{ inputs.artifact_name_3 }}
+          path: artifacts/${{ inputs.artifact_name_3 }}
+
+      - name: Download chunk 4 artifact
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.source_run_id }}
+          name: ${{ inputs.artifact_name_4 }}
+          path: artifacts/${{ inputs.artifact_name_4 }}
+
+      - name: Show downloaded artifact files
+        run: |
+          find artifacts -maxdepth 6 -type f | sort
+
+      - name: Merge chunk manifest and audit files
+        run: |
+          python scripts/merge_fortune2025_top100_10k_artifacts.py \
+            --artifact-root artifacts \
+            --run-id "${{ inputs.source_run_id }}"
+
+      - name: Validate combined outputs
+        run: |
+          test -f "data/processed/fortune2025_top100_10k_run_${{ inputs.source_run_id }}_combined_manifest.csv"
+          test -f "data/audit/fortune2025_top100_10k_run_${{ inputs.source_run_id }}_combined_audit.csv"
+          test -f "data/audit/fortune2025_top100_10k_run_${{ inputs.source_run_id }}_merge_summary.csv"
+          echo "Combined manifest lines including header:"
+          wc -l "data/processed/fortune2025_top100_10k_run_${{ inputs.source_run_id }}_combined_manifest.csv"
+          echo "Combined audit lines including header:"
+          wc -l "data/audit/fortune2025_top100_10k_run_${{ inputs.source_run_id }}_combined_audit.csv"
+          echo "Merge summary:"
+          cat "data/audit/fortune2025_top100_10k_run_${{ inputs.source_run_id }}_merge_summary.csv"
+
+      - name: Upload merged outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: fortune2025-top100-10k-run-${{ inputs.source_run_id }}-merged
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            data/processed/fortune2025_top100_10k_run_${{ inputs.source_run_id }}_combined_manifest.csv
+            data/audit/fortune2025_top100_10k_run_${{ inputs.source_run_id }}_combined_audit.csv
+            data/audit/fortune2025_top100_10k_run_${{ inputs.source_run_id }}_merge_summary.csv
