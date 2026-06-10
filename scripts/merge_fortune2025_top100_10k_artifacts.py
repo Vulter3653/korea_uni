@@ -4,14 +4,18 @@
 This script merges chunk-level manifest/audit CSV files produced by
 `collect-fortune-top100-10k.yml` into combined run-level CSV files.
 
-Expected input layout after `actions/download-artifact`:
+Important artifact-path note
+----------------------------
+GitHub Actions upload/download may strip the common `data/` prefix from
+artifact paths. Therefore, this script accepts both layouts:
 
-    artifacts/
-      fortune2025-top100-10k-chunk-1/
-        data/processed/fortune2025_top100_10k_chunk_01_manifest.csv
-        data/audit/fortune2025_top100_10k_chunk_01_audit.csv
-      fortune2025-top100-10k-chunk-2/
-        ...
+    artifacts/<artifact>/data/processed/*_manifest.csv
+    artifacts/<artifact>/data/audit/*_audit.csv
+
+and:
+
+    artifacts/<artifact>/processed/*_manifest.csv
+    artifacts/<artifact>/audit/*_audit.csv
 
 Outputs:
 
@@ -28,14 +32,20 @@ import hashlib
 import sys
 from collections import Counter
 from pathlib import Path
-from typing import Dict, Iterable, List, Tuple
+from typing import Dict, List, Tuple
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_ARTIFACT_ROOT = REPO_ROOT / "artifacts"
 DEFAULT_RUN_ID = "unknown_run"
 
-MANIFEST_GLOB = "**/data/processed/fortune2025_top100_10k_chunk_*_manifest.csv"
-AUDIT_GLOB = "**/data/audit/fortune2025_top100_10k_chunk_*_audit.csv"
+MANIFEST_GLOBS = [
+    "**/data/processed/fortune2025_top100_10k_chunk_*_manifest.csv",
+    "**/processed/fortune2025_top100_10k_chunk_*_manifest.csv",
+]
+AUDIT_GLOBS = [
+    "**/data/audit/fortune2025_top100_10k_chunk_*_audit.csv",
+    "**/audit/fortune2025_top100_10k_chunk_*_audit.csv",
+]
 EXPECTED_CHUNKS = {"1", "2", "3", "4"}
 EXPECTED_ROWS_PER_CHUNK = 75
 EXPECTED_TOTAL_ROWS = 300
@@ -62,6 +72,17 @@ def sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
+def unique_sorted(paths: List[Path]) -> List[Path]:
+    return sorted(set(paths), key=lambda p: str(p))
+
+
+def collect_by_globs(root: Path, patterns: List[str]) -> List[Path]:
+    paths: List[Path] = []
+    for pattern in patterns:
+        paths.extend(root.glob(pattern))
+    return unique_sorted(paths)
+
+
 def chunk_id_from_rows(rows: List[Dict[str, str]], fallback: str) -> str:
     if rows and rows[0].get("collection_chunk_id"):
         return rows[0]["collection_chunk_id"]
@@ -77,10 +98,15 @@ def infer_chunk_from_path(path: Path) -> str:
 
 
 def collect_chunk_files(artifact_root: Path) -> Tuple[List[Path], List[Path]]:
-    manifests = sorted(artifact_root.glob(MANIFEST_GLOB))
-    audits = sorted(artifact_root.glob(AUDIT_GLOB))
+    manifests = collect_by_globs(artifact_root, MANIFEST_GLOBS)
+    audits = collect_by_globs(artifact_root, AUDIT_GLOBS)
     if not manifests:
-        raise FileNotFoundError(f"No chunk manifest files found under {artifact_root}")
+        discovered = "\n".join(str(p) for p in sorted(artifact_root.glob("**/*")) if p.is_file())
+        raise FileNotFoundError(
+            f"No chunk manifest files found under {artifact_root}.\n"
+            f"Searched patterns: {MANIFEST_GLOBS}\n"
+            f"Discovered files:\n{discovered}"
+        )
     return manifests, audits
 
 
@@ -112,8 +138,6 @@ def validate_manifest_rows(rows: List[Dict[str, str]]) -> None:
 
 
 def make_summary_rows(
-    manifest_files: List[Path],
-    audit_files: List[Path],
     manifest_rows: List[Dict[str, str]],
     audit_rows: List[Dict[str, str]],
     combined_manifest_path: Path,
@@ -226,8 +250,6 @@ def merge_artifacts(artifact_root: Path, run_id: str) -> Tuple[Path, Path, Path]
         "status_counts",
     ]
     summary_rows = make_summary_rows(
-        manifest_files,
-        audit_files,
         all_manifest_rows,
         all_audit_rows,
         combined_manifest_path,
