@@ -15,6 +15,18 @@ A 10-K Filing Event Study of Fortune 2025 Top 100 Firms
 
 The empirical design uses 10-K `filing_date` as the event date. AI disclosure variables are text-based communication proxies; they are not direct observations of actual AI adoption.
 
+## Dashboard
+
+Open the static dashboard:
+
+```text
+ai_adoption_news_dashboard.html
+```
+
+The dashboard summarizes the 10-K filing event-study design, sample construction, AI-related disclosure measures, descriptive event-study statistics, model-free evidence, regression evidence, placebo diagnostics, limitations, and downloadable output files.
+
+The dashboard is a static HTML report. It presents event-window evidence and diagnostic summaries; it should not be interpreted as standalone proof of an AI-specific causal effect.
+
 ## Event-Study Design
 
 | Component | Design |
