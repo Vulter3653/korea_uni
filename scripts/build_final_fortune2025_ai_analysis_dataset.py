@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build final Fortune 2025 Top 100 AI analysis datasets.
+"""Build final Fortune 2025 Top 100 AI communication measurement datasets.
 
 Inputs
 ------
@@ -65,6 +65,9 @@ TOPIC_NUMERIC_COLUMNS = [
     "AI_Infrastructure_Topic_Share",
     "AI_AIUse_LegalRisk_Topic_Count",
     "AI_AIUse_LegalRisk_Topic_Share",
+    "AI_RiskRelated_Topic_Count",
+    "AI_RiskRelated_Topic_Share",
+    "AI_Risk_Orientation_Proxy",
     "AI_NegativeSensitive_Topic_Count",
     "AI_NegativeSensitive_Topic_Share",
     "AI_Negative_Orientation",
@@ -145,6 +148,7 @@ def build_final_rows(industry_rows: List[Dict[str, str]], k5_rows: List[Dict[str
 
     for base in industry_rows:
         out: Dict[str, object] = dict(base)
+        out["AI_Related_Disclosure_Intensity"] = base.get("ai_keyword_per_10k_words", "")
         has_10k_text = is_true(base.get("has_10k_text"))
         topic = k5_by_key.get(key(base))
         has_ai_window = topic is not None
@@ -158,6 +162,10 @@ def build_final_rows(industry_rows: List[Dict[str, str]], k5_rows: List[Dict[str
         if topic:
             for col in TOPIC_NUMERIC_COLUMNS + TOPIC_TEXT_COLUMNS:
                 out[col] = topic.get(col, "")
+            # Backfill conservative alias columns when reading older K=5 outputs.
+            out["AI_RiskRelated_Topic_Count"] = topic.get("AI_RiskRelated_Topic_Count") or topic.get("AI_NegativeSensitive_Topic_Count", "")
+            out["AI_RiskRelated_Topic_Share"] = topic.get("AI_RiskRelated_Topic_Share") or topic.get("AI_NegativeSensitive_Topic_Share", "")
+            out["AI_Risk_Orientation_Proxy"] = topic.get("AI_Risk_Orientation_Proxy") or topic.get("AI_Negative_Orientation", "")
         elif has_10k_text:
             # Collected text but no AI mention window: topic exposure is structurally zero.
             for col in TOPIC_NUMERIC_COLUMNS:
@@ -191,11 +199,11 @@ def build_summary(master_rows: List[Dict[str, object]], text_rows: List[Dict[str
         {"metric": "text_rows_without_ai_windows", "value": str(len(text_rows) - len(k5_rows)), "note": "Text collected but no AI mention window; topic variables set to zero"},
         {"metric": "download_status_counts", "value": "; ".join(f"{k}={v}" for k, v in sorted(status_counts.items())), "note": "Final 10-K collection status in master dataset"},
         {"metric": "main_topic_solution", "value": "K=5", "note": "Selected for interpretability; K=4 retained as robustness and K=6 as sensitivity"},
-        {"metric": "main_iv", "value": "AI_NegativeSensitive_Topic_Share", "note": "T0 privacy/data/law + T2 cybersecurity/security threat + T4 AI use/legal/risk"},
-        {"metric": "mean_AI_NegativeSensitive_Topic_Share_text_sample", "value": f"{mean(text_rows, 'AI_NegativeSensitive_Topic_Share'):.6f}", "note": "Mean over 273 text-sample rows, including zero-AI-window rows"},
-        {"metric": "mean_AI_NegativeSensitive_Topic_Share_k5_topic_sample", "value": f"{mean(k5_rows, 'AI_NegativeSensitive_Topic_Share'):.6f}", "note": "Mean over 246 K=5 topic-sample rows"},
+        {"metric": "focal_communication_measure", "value": "AI_RiskRelated_Topic_Share", "note": "T0 privacy/data/law + T2 cybersecurity/security threat + T4 AI use/legal/risk; text-based communication proxy"},
+        {"metric": "mean_AI_RiskRelated_Topic_Share_text_sample", "value": f"{mean(text_rows, 'AI_RiskRelated_Topic_Share'):.6f}", "note": "Mean over 273 text-sample rows, including zero-AI-window rows"},
+        {"metric": "mean_AI_RiskRelated_Topic_Share_k5_topic_sample", "value": f"{mean(k5_rows, 'AI_RiskRelated_Topic_Share'):.6f}", "note": "Mean over 246 K=5 topic-sample rows"},
         {"metric": "mean_AI_Infrastructure_Topic_Share_text_sample", "value": f"{mean(text_rows, 'AI_Infrastructure_Topic_Share'):.6f}", "note": "Mean over 273 text-sample rows"},
-        {"metric": "mean_AI_Negative_Orientation_text_sample", "value": f"{mean(text_rows, 'AI_Negative_Orientation'):.6f}", "note": "Mean over 273 text-sample rows"},
+        {"metric": "mean_AI_Risk_Orientation_Proxy_text_sample", "value": f"{mean(text_rows, 'AI_Risk_Orientation_Proxy'):.6f}", "note": "Mean over 273 text-sample rows"},
         {"metric": "dominant_topic_counts_k5_topic_sample", "value": "; ".join(f"{k}={v}" for k, v in sorted(dominant_counts.items())), "note": "Dominant topic distribution among 246 AI-window firm-years"},
         {"metric": "naics_sector_counts_master", "value": "; ".join(f"{k}={v}" for k, v in sorted(sector_counts.items())), "note": "Master firm-year counts by approximate NAICS sector code"},
     ]

@@ -1,0 +1,7 @@
+target_report_year,naics_sector_code,naics_sector_name,download_status,non_success_rows,note
+2023,42,Wholesale Trade,missing,1,Approximate sector from downstream enrichment; not fully verified firm-level NAICS
+2023,52,Finance and Insurance,missing,1,Approximate sector from downstream enrichment; not fully verified firm-level NAICS
+2023,Unclassified,Unclassified,failed,8,Approximate sector from downstream enrichment; not fully verified firm-level NAICS
+2024,52,Finance and Insurance,missing,1,Approximate sector from downstream enrichment; not fully verified firm-level NAICS
+2024,Unclassified,Unclassified,failed,8,Approximate sector from downstream enrichment; not fully verified firm-level NAICS
+2025,Unclassified,Unclassified,failed,8,Approximate sector from downstream enrichment; not fully verified firm-level NAICS

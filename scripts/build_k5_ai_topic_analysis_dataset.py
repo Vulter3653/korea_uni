@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Build the main K=5 AI topic analysis dataset.
+"""Build the K=5 AI communication topic-analysis dataset.
 
-This script treats K=5 as the main topic solution because it provides stronger
-interpretability for negative public communication analysis than K=4 while
-remaining close to K=4 in optimization quality.
+This script treats K=5 as the selected descriptive topic solution because it
+provides interpretable AI communication contexts while remaining close to K=4
+in optimization quality. It does not estimate causal effects or measure actual
+AI adoption.
 
 K=5 topic interpretation
 ------------------------
@@ -15,14 +16,18 @@ T4: AI use/legal/regulatory/risk
 
 Main derived variables
 ----------------------
-AI_NegativeSensitive_Topic_Share = T0 + T2 + T4
-AI_NegativeSensitive_Topic_Count = T0 + T2 + T4
+AI_RiskRelated_Topic_Share = T0 + T2 + T4
+AI_RiskRelated_Topic_Count = T0 + T2 + T4
+Backward-compatible aliases retained in outputs:
+AI_NegativeSensitive_Topic_Share = AI_RiskRelated_Topic_Share
+AI_NegativeSensitive_Topic_Count = AI_RiskRelated_Topic_Count
 AI_Privacy_Data_Law_Topic_Share = T0
 AI_Cybersecurity_Risk_Topic_Share = T2
 AI_AIUse_LegalRisk_Topic_Share = T4
 AI_Infrastructure_Topic_Share = T3
 AI_Business_Product_Topic_Share = T1
-AI_Negative_Orientation = (T0 + T2 + T4 - T3) / ai_window_count
+AI_Risk_Orientation_Proxy = (T0 + T2 + T4 - T3) / ai_window_count
+AI_Negative_Orientation = AI_Risk_Orientation_Proxy
 
 Outputs
 -------
@@ -125,6 +130,9 @@ def build_dataset(rows: List[Dict[str, str]]) -> List[Dict[str, object]]:
                 "AI_Infrastructure_Topic_Share": round(infrastructure_share, 6),
                 "AI_AIUse_LegalRisk_Topic_Count": t4_count,
                 "AI_AIUse_LegalRisk_Topic_Share": round(t4_share, 6),
+                "AI_RiskRelated_Topic_Count": neg_count,
+                "AI_RiskRelated_Topic_Share": round(neg_share, 6),
+                "AI_Risk_Orientation_Proxy": round(negative_orientation, 6),
                 "AI_NegativeSensitive_Topic_Count": neg_count,
                 "AI_NegativeSensitive_Topic_Share": round(neg_share, 6),
                 "AI_Negative_Orientation": round(negative_orientation, 6),
@@ -146,11 +154,11 @@ def build_summary(rows: List[Dict[str, object]]) -> List[Dict[str, str]]:
         {"metric": "topic_solution", "value": "K=5", "note": "Main topic solution selected for interpretability"},
         {"metric": "firm_year_rows", "value": str(n_rows), "note": "Firm-years with at least one AI mention window"},
         {"metric": "topic_labels", "value": "; ".join(f"T{k}={v}" for k, v in TOPIC_LABELS.items()), "note": "K=5 manual interpretation based on topic_terms.csv"},
-        {"metric": "main_iv", "value": "AI_NegativeSensitive_Topic_Share", "note": "T0 + T2 + T4 share"},
-        {"metric": "negative_sensitive_components", "value": "T0 privacy/data/law + T2 cybersecurity/security threat + T4 AI use/legal/risk", "note": "Used to predict negative public communication"},
-        {"metric": "mean_AI_NegativeSensitive_Topic_Share", "value": f"{avg_neg:.6f}", "note": "Average across firm-years with AI windows"},
+        {"metric": "focal_communication_measure", "value": "AI_RiskRelated_Topic_Share", "note": "T0 + T2 + T4 share; text-based communication proxy, not actual AI adoption"},
+        {"metric": "risk_related_components", "value": "T0 privacy/data/law + T2 cybersecurity/security threat + T4 AI use/legal/risk", "note": "Risk/regulation/privacy/cybersecurity/legal communication context"},
+        {"metric": "mean_AI_RiskRelated_Topic_Share", "value": f"{avg_neg:.6f}", "note": "Average across firm-years with AI windows"},
         {"metric": "mean_AI_Infrastructure_Topic_Share", "value": f"{avg_infra:.6f}", "note": "Average across firm-years with AI windows"},
-        {"metric": "mean_AI_Negative_Orientation", "value": f"{avg_orientation:.6f}", "note": "Mean of (negative-sensitive count - infrastructure count) / AI window count"},
+        {"metric": "mean_AI_Risk_Orientation_Proxy", "value": f"{avg_orientation:.6f}", "note": "Mean of (risk-related count - infrastructure count) / AI window count"},
         {"metric": "dominant_topic_counts", "value": "; ".join(f"{k}={v}" for k, v in sorted(dominant_counts.items())), "note": "Dominant K=5 topic by firm-year"},
     ]
 

@@ -60,7 +60,7 @@ USER_AGENT = os.getenv(
     "Seung Hyun Choi korea_uni research shch3653@g.skku.edu",
 )
 
-AI_PATTERNS = [
+STRICT_AI_PATTERNS = [
     r"\bartificial intelligence\b",
     r"\bgenerative ai\b",
     r"\bgenai\b",
@@ -71,9 +71,16 @@ AI_PATTERNS = [
     r"\bneural network(?:s)?\b",
     r"\blarge language model(?:s)?\b",
     r"\bllm(?:s)?\b",
+]
+BROAD_AI_RELATED_PATTERNS = [
     r"\balgorithmic\b",
     r"\bautomation\b",
 ]
+# Backward-compatible broad AI-related disclosure proxy. Strict terms should be
+# preferred for main measurement when the pipeline is rerun with validation.
+AI_PATTERNS = STRICT_AI_PATTERNS + BROAD_AI_RELATED_PATTERNS
+STRICT_AI_REGEX = re.compile("|".join(STRICT_AI_PATTERNS), flags=re.IGNORECASE)
+BROAD_AI_RELATED_REGEX = re.compile("|".join(BROAD_AI_RELATED_PATTERNS), flags=re.IGNORECASE)
 AI_REGEX = re.compile("|".join(AI_PATTERNS), flags=re.IGNORECASE)
 TAG_RE = re.compile(r"<[^>]+>")
 SCRIPT_STYLE_RE = re.compile(r"<(script|style)[\s\S]*?</\1>", re.IGNORECASE)

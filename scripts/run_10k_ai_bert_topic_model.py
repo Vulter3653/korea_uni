@@ -51,10 +51,33 @@ DEFAULT_INPUT_CSV = REPO_ROOT / "data" / "processed" / "fortune2025_top100_10k_r
 OUTPUT_DIR = REPO_ROOT / "data" / "processed" / "10k_ai_topics"
 AUDIT_DIR = REPO_ROOT / "data" / "audit" / "10k_ai_topics"
 
+STRICT_AI_TERMS = [
+    r"artificial intelligence",
+    r"generative ai",
+    r"genai",
+    r"machine learning",
+    r"deep learning",
+    r"natural language processing",
+    r"nlp",
+    r"computer vision",
+    r"neural network(?:s)?",
+    r"large language model(?:s)?",
+    r"llm(?:s)?",
+    r"ai",
+]
+BROAD_AI_RELATED_TERMS = [
+    r"predictive analytics",
+    r"algorithmic",
+    r"automation",
+    r"automated decision",
+]
+STRICT_AI_REGEX = re.compile(r"\b(" + "|".join(STRICT_AI_TERMS) + r")\b", flags=re.IGNORECASE)
+BROAD_AI_RELATED_REGEX = re.compile(r"\b(" + "|".join(BROAD_AI_RELATED_TERMS) + r")\b", flags=re.IGNORECASE)
 AI_REGEX = re.compile(
-    r"\b(artificial intelligence|generative ai|genai|machine learning|deep learning|large language model|large language models|llm|llms|natural language processing|nlp|computer vision|predictive analytics|algorithmic|automation|automated decision|ai)\b",
+    r"\b(" + "|".join(STRICT_AI_TERMS + BROAD_AI_RELATED_TERMS) + r")\b",
     flags=re.IGNORECASE,
 )
+STANDALONE_AI_REGEX = re.compile(r"\bai\b", flags=re.IGNORECASE)
 SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s+(?=[A-Z0-9])")
 TOKEN_RE = re.compile(r"\b[a-z][a-z0-9_\-]{2,}\b")
 STOPWORDS = set(
@@ -95,6 +118,8 @@ class MentionWindow:
     window_start: int
     window_end: int
     ai_keyword: str
+    keyword_match_type: str
+    standalone_ai_only: str
     window_text: str
     token_count: int
 
@@ -144,6 +169,10 @@ def extract_windows(rows: List[Dict[str, str]], window_size: int, max_windows_pe
             end = min(len(sentences) - 1, idx + window_size)
             window_text = " ".join(sentences[start : end + 1])
             token_count = len(tokenize(window_text))
+            keyword = match.group(0)
+            keyword_match_type = "strict" if STRICT_AI_REGEX.fullmatch(keyword) else "broad"
+            strict_terms_in_window = STRICT_AI_REGEX.findall(window_text)
+            standalone_only = "TRUE" if strict_terms_in_window and all(term.lower() == "ai" for term in strict_terms_in_window) and not BROAD_AI_RELATED_REGEX.search(window_text) else "FALSE"
             mention_id = f"{row.get('ticker','NA')}_{row.get('target_report_year','NA')}_{idx}"
             windows.append(
                 MentionWindow(
@@ -159,7 +188,9 @@ def extract_windows(rows: List[Dict[str, str]], window_size: int, max_windows_pe
                     sentence_index=idx,
                     window_start=start,
                     window_end=end,
-                    ai_keyword=match.group(0),
+                    ai_keyword=keyword,
+                    keyword_match_type=keyword_match_type,
+                    standalone_ai_only=standalone_only,
                     window_text=window_text,
                     token_count=token_count,
                 )

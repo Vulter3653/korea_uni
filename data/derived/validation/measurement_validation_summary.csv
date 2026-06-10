@@ -1,0 +1,7 @@
+metric,value,note
+source_windows,4254,data/processed/10k_ai_topics/ai_mention_windows.csv
+strict_only_windows,3821,Contains strict AI terms only
+strict_and_broad_windows,221,Contains both strict and broad AI-related terms
+broad_only_windows,212,Broad AI-related terms only; use for sensitivity checks
+standalone_ai_only_windows,2138,Prepared for manual false-positive review; validation not completed by this script
+master_rows_checked,300,data/processed/fortune2025_top100_final_ai_analysis_master.csv
