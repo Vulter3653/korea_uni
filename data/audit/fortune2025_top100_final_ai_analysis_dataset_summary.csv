@@ -1,0 +1,14 @@
+metric,value,note
+master_rows,300,Fortune 2025 Top 100 x 2023-2025 firm-year master frame
+text_sample_rows,273,Rows with successfully collected 10-K text
+k5_topic_sample_rows,246,Rows with at least one AI mention window under K=5 topic solution
+text_rows_without_ai_windows,27,Text collected but no AI mention window; topic variables set to zero
+download_status_counts,failed=24; missing=3; success=273,Final 10-K collection status in master dataset
+main_topic_solution,K=5,Selected for interpretability; K=4 retained as robustness and K=6 as sensitivity
+main_iv,AI_NegativeSensitive_Topic_Share,T0 privacy/data/law + T2 cybersecurity/security threat + T4 AI use/legal/risk
+mean_AI_NegativeSensitive_Topic_Share_text_sample,0.528589,"Mean over 273 text-sample rows, including zero-AI-window rows"
+mean_AI_NegativeSensitive_Topic_Share_k5_topic_sample,0.586605,Mean over 246 K=5 topic-sample rows
+mean_AI_Infrastructure_Topic_Share_text_sample,0.126034,Mean over 273 text-sample rows
+mean_AI_Negative_Orientation_text_sample,0.402555,Mean over 273 text-sample rows
+dominant_topic_counts_k5_topic_sample,ai_cloud_platform_infrastructure=35; ai_use_legal_regulatory_risk=93; business_product_service_revenue=70; cybersecurity_attacks_security_threats=21; privacy_data_law_protection=27,Dominant topic distribution among 246 AI-window firm-years
+naics_sector_counts_master,31-33=102; 42=21; 44-45=30; 48-49=21; 51=24; 52=69; 56=6; 62=3,Master firm-year counts by approximate NAICS sector code
