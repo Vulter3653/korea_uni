@@ -1,0 +1,4 @@
+fortune_rank_2025,company_name,ticker,cik,cik_padded,target_report_year,form_type,filing_date,report_date,accession_number,primary_document,filing_source,sec_filing_url,sec_document_url,local_html_path,local_text_path,recollection_status,failure_reason,total_words,ai_keyword_count,ai_keyword_per_10k_words
+76,Galaxy Digital,GLXY,1859392,0001859392,2023,10-K,,,,,,,,,,missing,no_10k_for_target_report_year_after_recent_and_files_lookup,0,0,0.0
+76,Galaxy Digital,GLXY,1859392,0001859392,2024,10-K,,,,,,,,,,missing,no_10k_for_target_report_year_after_recent_and_files_lookup,0,0,0.0
+90,Ingram Micro Holding,INGM,1897762,0001897762,2023,10-K,,,,,,,,,,missing,no_10k_for_target_report_year_after_recent_and_files_lookup,0,0,0.0
