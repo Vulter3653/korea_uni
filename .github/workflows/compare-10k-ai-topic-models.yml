@@ -1,0 +1,178 @@
+name: Compare 10-K AI Topic Models
+
+on:
+  workflow_dispatch:
+    inputs:
+      k_values:
+        description: "Comma-separated K values to compare"
+        required: true
+        default: "4,5,6"
+        type: string
+      window_size:
+        description: "Sentence window size around each AI keyword sentence"
+        required: true
+        default: "1"
+        type: string
+      max_windows_per_doc:
+        description: "Maximum AI windows per document; 0 means no cap"
+        required: true
+        default: "0"
+        type: string
+      model_name:
+        description: "SentenceTransformer model name"
+        required: true
+        default: "sentence-transformers/all-MiniLM-L6-v2"
+        type: string
+      tfidf_fallback_only:
+        description: "Use TF-IDF KMeans only instead of downloading Sentence-BERT"
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "true"
+          - "false"
+      sec_user_agent:
+        description: "SEC User-Agent contact string used when materializing missing TXT files"
+        required: true
+        default: "Seung Hyun Choi korea_uni research shch3653@g.skku.edu"
+        type: string
+      request_sleep_seconds:
+        description: "Delay between SEC document requests when materializing TXT files"
+        required: false
+        default: "0.50"
+        type: string
+      commit_outputs_to_repo:
+        description: "Commit comparison outputs to repository"
+        required: true
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  compare-topic-models:
+    name: Compare fixed-K AI topic models
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas scikit-learn
+          if [ "${{ inputs.tfidf_fallback_only }}" = "false" ]; then
+            pip install sentence-transformers
+          fi
+
+      - name: Validate input CSV
+        run: |
+          test -f data/processed/fortune2025_top100_10k_report_linked_text_sample.csv
+          python - <<'PY'
+          import csv
+          rows = list(csv.DictReader(open('data/processed/fortune2025_top100_10k_report_linked_text_sample.csv', encoding='utf-8')))
+          print(f"Rows: {len(rows)}")
+          if len(rows) != 273:
+              raise SystemExit(f"Expected 273 text sample rows, found {len(rows)}")
+          PY
+
+      - name: Materialize missing 10-K text files from SEC URLs
+        env:
+          SEC_USER_AGENT: ${{ inputs.sec_user_agent }}
+          SEC_REQUEST_SLEEP_SECONDS: ${{ inputs.request_sleep_seconds }}
+        run: |
+          python scripts/materialize_10k_text_files.py \
+            --input-csv data/processed/fortune2025_top100_10k_report_linked_text_sample.csv
+
+      - name: Validate materialized text files
+        run: |
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+          root = Path('.')
+          rows = list(csv.DictReader(open('data/processed/fortune2025_top100_10k_report_linked_text_sample.csv', encoding='utf-8')))
+          missing = [r.get('local_text_path') for r in rows if r.get('local_text_path') and not (root / r.get('local_text_path')).exists()]
+          print(f"Rows: {len(rows)}")
+          print(f"Missing text files after materialization: {len(missing)}")
+          if missing:
+              print('\n'.join(missing[:20]))
+              raise SystemExit('Some local text files are still missing after SEC materialization')
+          PY
+
+      - name: Compare fixed-K topic models
+        run: |
+          ARGS="--input-csv data/processed/fortune2025_top100_10k_report_linked_text_sample.csv --k-values ${{ inputs.k_values }} --window-size ${{ inputs.window_size }} --max-windows-per-doc ${{ inputs.max_windows_per_doc }} --model-name ${{ inputs.model_name }}"
+          if [ "${{ inputs.tfidf_fallback_only }}" = "true" ]; then
+            ARGS="$ARGS --tfidf-fallback-only"
+          fi
+          python scripts/compare_10k_ai_topic_models.py $ARGS
+
+      - name: Validate comparison outputs
+        run: |
+          test -f data/processed/10k_ai_topic_model_comparison/k456_model_comparison_summary.csv
+          test -f data/processed/10k_ai_topic_model_comparison/k456_topic_terms_long.csv
+          test -f data/processed/10k_ai_topic_model_comparison/k456_firm_year_topic_distribution_long.csv
+          test -f data/audit/10k_ai_topics/k456_model_comparison_summary.csv
+          echo "K comparison summary:"
+          cat data/audit/10k_ai_topics/k456_model_comparison_summary.csv
+          echo "K=4 topic terms:"
+          cat data/processed/10k_ai_topic_model_comparison/k_04/topic_terms.csv
+          echo "K=5 topic terms:"
+          cat data/processed/10k_ai_topic_model_comparison/k_05/topic_terms.csv
+          echo "K=6 topic terms:"
+          cat data/processed/10k_ai_topic_model_comparison/k_06/topic_terms.csv
+
+      - name: Commit comparison outputs to repository
+        if: ${{ inputs.commit_outputs_to_repo == 'true' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            data/processed/10k_ai_topic_model_comparison/k_04/ai_topic_assignments.csv \
+            data/processed/10k_ai_topic_model_comparison/k_04/firm_year_topic_distribution.csv \
+            data/processed/10k_ai_topic_model_comparison/k_04/topic_terms.csv \
+            data/processed/10k_ai_topic_model_comparison/k_05/ai_topic_assignments.csv \
+            data/processed/10k_ai_topic_model_comparison/k_05/firm_year_topic_distribution.csv \
+            data/processed/10k_ai_topic_model_comparison/k_05/topic_terms.csv \
+            data/processed/10k_ai_topic_model_comparison/k_06/ai_topic_assignments.csv \
+            data/processed/10k_ai_topic_model_comparison/k_06/firm_year_topic_distribution.csv \
+            data/processed/10k_ai_topic_model_comparison/k_06/topic_terms.csv \
+            data/processed/10k_ai_topic_model_comparison/k456_model_comparison_summary.csv \
+            data/processed/10k_ai_topic_model_comparison/k456_topic_terms_long.csv \
+            data/processed/10k_ai_topic_model_comparison/k456_firm_year_topic_distribution_long.csv \
+            data/audit/10k_ai_topics/k456_model_comparison_summary.csv \
+            data/audit/10k_ai_topics/text_materialization_summary.csv
+          if git diff --cached --quiet; then
+            echo "No comparison output changes to commit."
+          else
+            git commit -m "data: compare 10-k ai topic models k4 k5 k6"
+            git push
+          fi
+
+      - name: Upload comparison outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: 10k-ai-topic-model-k456-comparison
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            data/processed/10k_ai_topic_model_comparison/**
+            data/audit/10k_ai_topics/k456_model_comparison_summary.csv
+            data/audit/10k_ai_topics/text_materialization_summary.csv
