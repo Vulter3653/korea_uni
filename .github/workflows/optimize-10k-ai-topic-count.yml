@@ -36,6 +36,16 @@ on:
         options:
           - "true"
           - "false"
+      sec_user_agent:
+        description: "SEC User-Agent contact string used when materializing missing TXT files"
+        required: true
+        default: "Seung Hyun Choi korea_uni research shch3653@g.skku.edu"
+        type: string
+      request_sleep_seconds:
+        description: "Delay between SEC document requests when materializing TXT files"
+        required: false
+        default: "0.50"
+        type: string
       commit_outputs_to_repo:
         description: "Commit optimization outputs to repository"
         required: true
@@ -56,7 +66,7 @@ jobs:
   optimize-topic-count:
     name: Optimize AI topic count before final topic modeling
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
 
     steps:
       - name: Checkout repository
@@ -77,9 +87,27 @@ jobs:
             pip install sentence-transformers
           fi
 
-      - name: Validate input CSV and text files
+      - name: Validate input CSV
         run: |
           test -f data/processed/fortune2025_top100_10k_report_linked_text_sample.csv
+          python - <<'PY'
+          import csv
+          rows = list(csv.DictReader(open('data/processed/fortune2025_top100_10k_report_linked_text_sample.csv', encoding='utf-8')))
+          print(f"Rows: {len(rows)}")
+          if len(rows) != 273:
+              raise SystemExit(f"Expected 273 text sample rows, found {len(rows)}")
+          PY
+
+      - name: Materialize missing 10-K text files from SEC URLs
+        env:
+          SEC_USER_AGENT: ${{ inputs.sec_user_agent }}
+          SEC_REQUEST_SLEEP_SECONDS: ${{ inputs.request_sleep_seconds }}
+        run: |
+          python scripts/materialize_10k_text_files.py \
+            --input-csv data/processed/fortune2025_top100_10k_report_linked_text_sample.csv
+
+      - name: Validate materialized text files
+        run: |
           python - <<'PY'
           import csv
           from pathlib import Path
@@ -87,10 +115,10 @@ jobs:
           rows = list(csv.DictReader(open('data/processed/fortune2025_top100_10k_report_linked_text_sample.csv', encoding='utf-8')))
           missing = [r.get('local_text_path') for r in rows if r.get('local_text_path') and not (root / r.get('local_text_path')).exists()]
           print(f"Rows: {len(rows)}")
-          print(f"Missing text files: {len(missing)}")
+          print(f"Missing text files after materialization: {len(missing)}")
           if missing:
               print('\n'.join(missing[:20]))
-              raise SystemExit('Some local text files referenced in CSV are missing from repository checkout')
+              raise SystemExit('Some local text files are still missing after SEC materialization')
           PY
 
       - name: Run topic count optimization
@@ -107,6 +135,8 @@ jobs:
           test -f data/audit/10k_ai_topics/topic_count_recommendation.csv
           echo "Topic count recommendation:"
           cat data/audit/10k_ai_topics/topic_count_recommendation.csv
+          echo "Text materialization summary:"
+          cat data/audit/10k_ai_topics/text_materialization_summary.csv
           echo "Top candidate rows:"
           head -n 10 data/processed/10k_ai_topics/topic_count_optimization.csv
 
@@ -117,7 +147,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add \
             data/processed/10k_ai_topics/topic_count_optimization.csv \
-            data/audit/10k_ai_topics/topic_count_recommendation.csv
+            data/audit/10k_ai_topics/topic_count_recommendation.csv \
+            data/audit/10k_ai_topics/text_materialization_summary.csv
           if git diff --cached --quiet; then
             echo "No topic optimization output changes to commit."
           else
@@ -134,3 +165,4 @@ jobs:
           path: |
             data/processed/10k_ai_topics/topic_count_optimization.csv
             data/audit/10k_ai_topics/topic_count_recommendation.csv
+            data/audit/10k_ai_topics/text_materialization_summary.csv
