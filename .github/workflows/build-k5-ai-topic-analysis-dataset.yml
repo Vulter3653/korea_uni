@@ -1,0 +1,91 @@
+name: Build K5 AI Topic Analysis Dataset
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_outputs_to_repo:
+        description: "Commit K=5 analysis dataset outputs to repository"
+        required: true
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-k5-analysis-dataset:
+    name: Build K=5 AI topic analysis dataset
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate K=5 comparison input
+        run: |
+          test -f data/processed/10k_ai_topic_model_comparison/k_05/firm_year_topic_distribution.csv
+          test -f data/processed/10k_ai_topic_model_comparison/k_05/topic_terms.csv
+
+      - name: Build K=5 analysis dataset
+        run: |
+          python scripts/build_k5_ai_topic_analysis_dataset.py
+
+      - name: Validate K=5 analysis outputs
+        run: |
+          test -f data/processed/fortune2025_top100_k5_ai_topic_analysis_dataset.csv
+          test -f data/audit/10k_ai_topics/k5_ai_topic_analysis_dataset_summary.csv
+          echo "K=5 analysis summary:"
+          cat data/audit/10k_ai_topics/k5_ai_topic_analysis_dataset_summary.csv
+          echo "K=5 dataset sample:"
+          head -n 5 data/processed/fortune2025_top100_k5_ai_topic_analysis_dataset.csv
+          python - <<'PY'
+          import csv
+          rows = list(csv.DictReader(open('data/processed/fortune2025_top100_k5_ai_topic_analysis_dataset.csv', encoding='utf-8')))
+          print(f"Rows: {len(rows)}")
+          if len(rows) != 246:
+              raise SystemExit(f"Expected 246 firm-year rows with AI windows, found {len(rows)}")
+          required = ['AI_NegativeSensitive_Topic_Share', 'AI_Infrastructure_Topic_Share', 'AI_Negative_Orientation']
+          missing = [c for c in required if c not in rows[0]]
+          if missing:
+              raise SystemExit(f"Missing required columns: {missing}")
+          PY
+
+      - name: Commit K=5 analysis outputs to repository
+        if: ${{ inputs.commit_outputs_to_repo == 'true' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            data/processed/fortune2025_top100_k5_ai_topic_analysis_dataset.csv \
+            data/audit/10k_ai_topics/k5_ai_topic_analysis_dataset_summary.csv
+          if git diff --cached --quiet; then
+            echo "No K=5 analysis dataset changes to commit."
+          else
+            git commit -m "data: add k5 ai topic analysis dataset"
+            git push
+          fi
+
+      - name: Upload K=5 analysis outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: k5-ai-topic-analysis-dataset
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            data/processed/fortune2025_top100_k5_ai_topic_analysis_dataset.csv
+            data/audit/10k_ai_topics/k5_ai_topic_analysis_dataset_summary.csv
