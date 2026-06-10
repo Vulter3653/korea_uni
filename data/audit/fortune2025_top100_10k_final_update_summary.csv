@@ -1,0 +1,12 @@
+metric,value,note
+source_run_id,27272856688,Original Top 100 collection run used for combined manifest/audit
+original_manifest_rows,300,failed=24; missing=15; success=261
+original_audit_rows,39,Rows where original download_status != success
+recollection_rows,15,missing=3; success=12
+recollection_success_rows_applied,12,Original missing rows replaced with recollection success rows
+recollection_missing_rows_retained,3,Still missing after recent+files lookup; failure_reason updated
+final_manifest_rows,300,failed=24; missing=3; success=273
+final_audit_rows,27,Rows where final download_status != success
+final_success_rows,273,Final collected 10-K firm-year rows
+final_manifest_sha256,45c96315739aac7fc8bf4f0163f74390271f28552acf05ae635f03f90363f3a0,data/processed/fortune2025_top100_10k_final_manifest.csv
+final_audit_sha256,3414c5939d2d7c86db016a5143fc8c2c1313d1cc2a67ecc8436c88c348f8c8e8,data/audit/fortune2025_top100_10k_final_audit.csv
