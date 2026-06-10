@@ -97,11 +97,11 @@ def estimate_event(event_id: str, event_rows: pd.DataFrame) -> Dict[str, object]
     first = event_rows.iloc[0].to_dict()
     base: Dict[str, object] = {
         "event_id": event_id,
-        "ticker": first.get("ticker", ""),
-        "company": first.get("company_name", ""),
+        "ticker": first.get("ticker_used", first.get("ticker_original", "")),
+        "company": first.get("company", ""),
         "filing_date": first.get("filing_date", ""),
-        "event_trading_date": first.get("event_trading_date", ""),
-        "market_benchmark": first.get("market_benchmark", ""),
+        "event_trading_date": first.get("event_trading_day", ""),
+        "market_benchmark": first.get("benchmark_symbol", ""),
     }
     est = event_rows[
         (event_rows["relative_trading_day"] >= ESTIMATION_WINDOW[0])
