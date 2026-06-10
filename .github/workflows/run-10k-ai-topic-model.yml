@@ -31,6 +31,16 @@ on:
         options:
           - "true"
           - "false"
+      sec_user_agent:
+        description: "SEC User-Agent contact string used when materializing missing TXT files"
+        required: true
+        default: "Seung Hyun Choi korea_uni research shch3653@g.skku.edu"
+        type: string
+      request_sleep_seconds:
+        description: "Delay between SEC document requests when materializing TXT files"
+        required: false
+        default: "0.50"
+        type: string
       commit_outputs_to_repo:
         description: "Commit topic model outputs to repository"
         required: true
@@ -51,7 +61,7 @@ jobs:
   run-topic-model:
     name: Run AI-related 10-K topic model
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 90
 
     steps:
       - name: Checkout repository
@@ -92,9 +102,27 @@ jobs:
           echo "Resolved n_topics=$K"
           echo "n_topics=$K" >> "$GITHUB_OUTPUT"
 
-      - name: Validate input CSV and text files
+      - name: Validate input CSV
         run: |
           test -f data/processed/fortune2025_top100_10k_report_linked_text_sample.csv
+          python - <<'PY'
+          import csv
+          rows = list(csv.DictReader(open('data/processed/fortune2025_top100_10k_report_linked_text_sample.csv', encoding='utf-8')))
+          print(f"Rows: {len(rows)}")
+          if len(rows) != 273:
+              raise SystemExit(f"Expected 273 text sample rows, found {len(rows)}")
+          PY
+
+      - name: Materialize missing 10-K text files from SEC URLs
+        env:
+          SEC_USER_AGENT: ${{ inputs.sec_user_agent }}
+          SEC_REQUEST_SLEEP_SECONDS: ${{ inputs.request_sleep_seconds }}
+        run: |
+          python scripts/materialize_10k_text_files.py \
+            --input-csv data/processed/fortune2025_top100_10k_report_linked_text_sample.csv
+
+      - name: Validate materialized text files
+        run: |
           python - <<'PY'
           import csv
           from pathlib import Path
@@ -102,10 +130,10 @@ jobs:
           rows = list(csv.DictReader(open('data/processed/fortune2025_top100_10k_report_linked_text_sample.csv', encoding='utf-8')))
           missing = [r.get('local_text_path') for r in rows if r.get('local_text_path') and not (root / r.get('local_text_path')).exists()]
           print(f"Rows: {len(rows)}")
-          print(f"Missing text files: {len(missing)}")
+          print(f"Missing text files after materialization: {len(missing)}")
           if missing:
               print('\n'.join(missing[:20]))
-              raise SystemExit('Some local text files referenced in CSV are missing from repository checkout')
+              raise SystemExit('Some local text files are still missing after SEC materialization')
           PY
 
       - name: Run topic model
@@ -125,6 +153,8 @@ jobs:
           test -f data/audit/10k_ai_topics/topic_model_summary.csv
           echo "Topic model summary:"
           cat data/audit/10k_ai_topics/topic_model_summary.csv
+          echo "Text materialization summary:"
+          cat data/audit/10k_ai_topics/text_materialization_summary.csv
           echo "Topic count recommendation used if n_topics=auto:"
           if [ -f data/audit/10k_ai_topics/topic_count_recommendation.csv ]; then cat data/audit/10k_ai_topics/topic_count_recommendation.csv; fi
           echo "Topic terms sample:"
@@ -140,7 +170,8 @@ jobs:
             data/processed/10k_ai_topics/ai_topic_assignments.csv \
             data/processed/10k_ai_topics/firm_year_topic_distribution.csv \
             data/processed/10k_ai_topics/topic_terms.csv \
-            data/audit/10k_ai_topics/topic_model_summary.csv
+            data/audit/10k_ai_topics/topic_model_summary.csv \
+            data/audit/10k_ai_topics/text_materialization_summary.csv
           if git diff --cached --quiet; then
             echo "No topic output changes to commit."
           else
@@ -160,3 +191,4 @@ jobs:
             data/processed/10k_ai_topics/firm_year_topic_distribution.csv
             data/processed/10k_ai_topics/topic_terms.csv
             data/audit/10k_ai_topics/topic_model_summary.csv
+            data/audit/10k_ai_topics/text_materialization_summary.csv
