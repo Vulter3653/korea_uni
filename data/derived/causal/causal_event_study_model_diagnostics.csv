@@ -1,0 +1,11 @@
+outcome,n_obs,df_resid,r_squared,adj_r_squared,fe_specification,se_specification,model_status,warning
+CAR_m1_p1,0,,,,not_estimated,not_estimated,failed,insufficient_regression_rows=0
+CAR_0_p1,0,,,,not_estimated,not_estimated,failed,insufficient_regression_rows=0
+CAR_0_p3,0,,,,not_estimated,not_estimated,failed,insufficient_regression_rows=0
+CAR_0_p5,0,,,,not_estimated,not_estimated,failed,insufficient_regression_rows=0
+AbnormalVolume_0_p1,0,,,,not_estimated,not_estimated,failed,insufficient_regression_rows=0
+AbnormalVolume_0_p3,0,,,,not_estimated,not_estimated,failed,insufficient_regression_rows=0
+AbnormalVolume_0_p5,0,,,,not_estimated,not_estimated,failed,insufficient_regression_rows=0
+CAR_m10_m6,0,,,,not_estimated,not_estimated,failed,insufficient_regression_rows=0
+CAR_m5_m2,0,,,,not_estimated,not_estimated,failed,insufficient_regression_rows=0
+AbnormalVolume_m5_m2,0,,,,not_estimated,not_estimated,failed,insufficient_regression_rows=0

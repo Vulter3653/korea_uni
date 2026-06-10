@@ -1,0 +1,1 @@
+event_id,ticker,company,filing_date,event_trading_date,market_benchmark,market_data_status,failure_reason,CAR_m1_p1,CAR_0_p1,CAR_0_p3,CAR_0_p5,AbnormalVolume_0_p1,AbnormalVolume_0_p3,AbnormalVolume_0_p5,CAR_m10_m6,CAR_m5_m2,AbnormalVolume_m5_m2

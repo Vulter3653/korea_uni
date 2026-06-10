@@ -1,0 +1,10 @@
+outcome,term,coef,std_error,t_stat,p_value,n_obs,r_squared,fe_specification,se_specification,interpretation
+CAR_m10_m6,AI_Related_Disclosure_Intensity,,,,,0,,not_estimated,not_estimated,model failed: insufficient_regression_rows=0
+CAR_m10_m6,AI_RiskRelated_Topic_Share,,,,,0,,not_estimated,not_estimated,model failed: insufficient_regression_rows=0
+CAR_m10_m6,AI_Risk_Orientation_Proxy,,,,,0,,not_estimated,not_estimated,model failed: insufficient_regression_rows=0
+CAR_m5_m2,AI_Related_Disclosure_Intensity,,,,,0,,not_estimated,not_estimated,model failed: insufficient_regression_rows=0
+CAR_m5_m2,AI_RiskRelated_Topic_Share,,,,,0,,not_estimated,not_estimated,model failed: insufficient_regression_rows=0
+CAR_m5_m2,AI_Risk_Orientation_Proxy,,,,,0,,not_estimated,not_estimated,model failed: insufficient_regression_rows=0
+AbnormalVolume_m5_m2,AI_Related_Disclosure_Intensity,,,,,0,,not_estimated,not_estimated,model failed: insufficient_regression_rows=0
+AbnormalVolume_m5_m2,AI_RiskRelated_Topic_Share,,,,,0,,not_estimated,not_estimated,model failed: insufficient_regression_rows=0
+AbnormalVolume_m5_m2,AI_Risk_Orientation_Proxy,,,,,0,,not_estimated,not_estimated,model failed: insufficient_regression_rows=0

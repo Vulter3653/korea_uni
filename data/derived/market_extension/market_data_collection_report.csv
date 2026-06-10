@@ -1,0 +1,8 @@
+metric,value,note
+total_firm_year_events,273,Input scaffold rows
+events_with_ticker,273,Rows with non-empty ticker
+events_with_sufficient_price_data,0,At least 120 estimation returns and event days through +5
+events_with_insufficient_estimation_window,0,Downloaded but did not meet sufficiency rule
+events_with_missing_ticker,0,Not requested from yfinance
+events_with_market_benchmark_data,0,no benchmark downloaded
+market_benchmark,,"Priority: SPY, then ^GSPC"
