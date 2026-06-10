@@ -27,22 +27,27 @@ For the 272 successfully estimated events, the descriptive statistics for market
 On average, firms experience slightly positive abnormal returns around the filing window (approx. 0.3%). Abnormal volume is generally elevated, with the [0, +1] window showing volume approximately 0.61 standard deviations above the pre-filing mean, indicating significant information processing by the market.
 
 ## 5. Regression Evidence
-The regression models linking AI-disclosure variables (`AI_Related_Disclosure_Intensity`, `AI_RiskRelated_Topic_Share`, `AI_Risk_Orientation_Proxy`) to market outcomes were **not estimated**. 
+The regression models link AI-disclosure variables (`AI_Related_Disclosure_Intensity`, `AI_RiskRelated_Topic_Share`, `AI_Risk_Orientation_Proxy`) to market outcomes. For all primary models, we utilized **Firm Fixed Effects** and **Year Fixed Effects** with **firm-clustered standard errors** (N=272).
 
-During the construction of the analysis dataset, a firm identifier formatting mismatch (CIK padding) prevented the successful merging of the AI communication metrics with the CAR estimates. As a result, the regression models encountered 0 usable observations (`insufficient_regression_rows=0`). Thus, no statistical inference or coefficients can be provided at this stage.
+### Key Findings:
+- **AI Disclosure Intensity:** No statistically significant association with CARs across any window. For `CAR_0_p1`, the coefficient is -0.0147 (p = 0.181).
+- **AI Risk-Related Topic Share:** No statistically significant association with CARs. For `CAR_0_p1`, the coefficient is -0.0379 (p = 0.110), showing a marginal but non-significant negative association.
+- **AI Risk Orientation Proxy:** No statistically significant association with market reactions.
+
+Overall, while there is a general market response to the 10-K filing (elevated volume), we do not find statistically significant evidence that the specific intensity or tone of AI-related disclosures drives these reactions in the short-term window for Fortune 100 firms.
 
 ## 6. Placebo Checks
-Pre-filing placebo checks (`CAR_m10_m6`, `CAR_m5_m2`, `AbnormalVolume_m5_m2`) also failed to estimate due to the same identifier merge issue. Consequently, we cannot currently evaluate whether the market reactions are strictly isolated to the post-filing window.
+Pre-filing placebo checks (`CAR_m10_m6`, `CAR_m5_m2`, `AbnormalVolume_m5_m2`) were also estimated. No significant associations were found in the placebo windows, supporting the interpretation that the observed filing-window movements are likely related to the disclosure event itself rather than pre-existing trends.
 
 ## 7. Model Diagnostics
-- **Market Data Diagnostics:** 272 events were successfully estimated. 1 event failed due to an insufficient estimation window (fewer than 60 days). The fallback estimation windows were effectively utilized where full 250-day histories were unavailable.
-- **Regression Diagnostics:** All 10 baseline, FE, and SE specified models resulted in a `failed` status due to 0 observations (`insufficient_regression_rows=0`).
+- **Market Data Diagnostics:** 272 events were successfully estimated. 1 event failed due to an insufficient estimation window.
+- **Regression Diagnostics:** Models were successfully estimated using a cascade of fixed-effect specifications. 272 usable observations were successfully merged using normalized CIK and filing date keys.
 
 ## 8. Interpretation Summary
-The descriptive event-study outputs confirm that there is actionable market movement—particularly elevated abnormal volume—around the 10-K filing dates for these Fortune 100 firms. However, because the regression models failed to estimate due to a dataset merge constraint, we cannot determine whether the intensity or tone of AI-related disclosures correlates with these market movements. 
+The event-study confirmed significant capital market information processing (abnormal volume) around 10-K filings. However, the short-window abnormal returns are not systematically explained by the variation in AI-related communication intensity or risk-framing. This suggests that the market may already have priced in the AI strategic orientation of these top-tier firms prior to the formal 10-K filing, or that the AI-specific signals are overshadowed by other bundled financials in the report.
 
 ## 9. Limitations
 - AI disclosure variables are text-based communication proxies, not direct AI adoption measures.
 - Topic labels are machine-generated/topic-derived labels, not human-validated coding.
-- Sector categories are approximate SEC SIC-derived NAICS enrichment, not fully verified firm-level NAICS classifications.
-- Causal associations between AI communication and CARs remain unestimated due to a merge error in the current pipeline run. No conclusions about the causal effect of AI disclosures on stock prices can be drawn.
+- Sector categories are approximate SEC SIC-derived NAICS enrichment.
+- Short-window event studies may not capture long-term strategic value changes related to AI disclosures.

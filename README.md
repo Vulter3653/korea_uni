@@ -63,7 +63,7 @@ data/raw/market_data/benchmarks/<BENCHMARK>.csv
 - If `adj_close` is missing, `close` will be used as a fallback.
 - If `volume` is missing, abnormal volume calculation will fail, but CARs will still be calculated.
 
-The current run successfully collected market data using the `FinanceDataReader` fallback since `yfinance` network fetching was blocked. CAR and abnormal volume outputs are successfully generated. However, regression models failed to estimate (`insufficient_regression_rows=0`) due to a CIK padding mismatch preventing the merge of AI text features with market outcomes.
+The current run successfully collected market data using the `FinanceDataReader` fallback since `yfinance` network fetching was blocked. Short-term CAR and abnormal volume outcomes were estimated for 272 events. Regression models and placebo checks were successfully estimated using the merged dataset.
 
 ## Sample Construction
 
@@ -71,10 +71,8 @@ The current run successfully collected market data using the `FinanceDataReader`
 | --- | ---: | --- |
 | Master 10-K frame | 300 | Fortune 2025 Top 100 x 2023-2025 coverage frame |
 | Observed 10-K text sample | 273 | Event-study candidate events |
+| Successfully estimated events | 272 | Final analytical sample for regressions |
 | K=5 AI-window topic sample | 246 | Downstream topic-derived communication measures |
-| Final audit / non-success rows | 27 | Missingness documentation |
-
-The 246-row K=5 sample is a downstream topic-analysis subset. It is not the full observed text sample.
 
 ## AI Disclosure Measures
 
@@ -110,7 +108,7 @@ AbnormalVolume_0_p3
 AbnormalVolume_0_p5
 ```
 
-The current generated event-study estimate file has headers but zero estimated rows because market data collection failed in this environment.
+Event-study estimates were successfully generated for 272 out of 273 candidates.
 
 ## Regression Specification
 
@@ -136,7 +134,7 @@ Implemented fallback order:
 4. No-FE baseline with controls
 ```
 
-Standard errors use firm-level clustering when feasible and HC1 robust standard errors otherwise. In the current run, regression models failed to estimate due to the identifier mismatch.
+Standard errors use firm-level clustering when feasible and HC1 robust standard errors otherwise. In the current run, regression models were successfully estimated with N=272 observations.
 
 ## Placebo Checks
 
@@ -148,7 +146,7 @@ CAR_m5_m2
 AbnormalVolume_m5_m2
 ```
 
-If AI-related disclosure measures predict post-filing reactions but not pre-filing placebo windows, the evidence is more consistent with a filing-window market response interpretation. The current placebo models failed to estimate due to the CIK padding mismatch.
+If AI-related disclosure measures predict post-filing reactions but not pre-filing placebo windows, the evidence is more consistent with a filing-window market response interpretation. Placebo models were successfully estimated.
 
 ## Reproduction Commands
 
@@ -186,10 +184,10 @@ git diff --check
 | `data/derived/market_extension/market_data_collection_report.csv` | Generated, documents market-data collection sources |
 | `data/derived/market_extension/post_filing_market_reaction_estimates.csv` | Generated, event estimates with CAR outputs |
 | `data/derived/market_extension/event_study_estimation_diagnostics.csv` | Generated, diagnostic estimates |
-| `data/derived/causal/ai_10k_event_study_analysis_dataset.csv` | Generated, 273 rows |
-| `data/derived/causal/causal_event_study_regression_summary.csv` | Generated, failed model rows |
-| `data/derived/causal/causal_event_study_model_diagnostics.csv` | Generated, failed model diagnostics |
-| `data/derived/causal/placebo_pre_filing_checks.csv` | Generated, failed placebo rows |
+| `data/derived/causal/ai_10k_event_study_analysis_dataset.csv` | Generated; 273 rows |
+| `data/derived/causal/causal_event_study_regression_summary.csv` | Generated; 21 coefficient rows |
+| `data/derived/causal/causal_event_study_model_diagnostics.csv` | Generated; 10 model diagnostics |
+| `data/derived/causal/placebo_pre_filing_checks.csv` | Generated; 9 placebo model rows |
 
 ## Limitations
 

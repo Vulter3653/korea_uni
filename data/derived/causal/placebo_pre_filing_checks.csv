@@ -1,10 +1,10 @@
 outcome,term,coef,std_error,t_stat,p_value,n_obs,r_squared,fe_specification,se_specification,interpretation
-CAR_m10_m6,AI_Related_Disclosure_Intensity,,,,,0,,not_estimated,not_estimated,model failed: insufficient_regression_rows=0
-CAR_m10_m6,AI_RiskRelated_Topic_Share,,,,,0,,not_estimated,not_estimated,model failed: insufficient_regression_rows=0
-CAR_m10_m6,AI_Risk_Orientation_Proxy,,,,,0,,not_estimated,not_estimated,model failed: insufficient_regression_rows=0
-CAR_m5_m2,AI_Related_Disclosure_Intensity,,,,,0,,not_estimated,not_estimated,model failed: insufficient_regression_rows=0
-CAR_m5_m2,AI_RiskRelated_Topic_Share,,,,,0,,not_estimated,not_estimated,model failed: insufficient_regression_rows=0
-CAR_m5_m2,AI_Risk_Orientation_Proxy,,,,,0,,not_estimated,not_estimated,model failed: insufficient_regression_rows=0
-AbnormalVolume_m5_m2,AI_Related_Disclosure_Intensity,,,,,0,,not_estimated,not_estimated,model failed: insufficient_regression_rows=0
-AbnormalVolume_m5_m2,AI_RiskRelated_Topic_Share,,,,,0,,not_estimated,not_estimated,model failed: insufficient_regression_rows=0
-AbnormalVolume_m5_m2,AI_Risk_Orientation_Proxy,,,,,0,,not_estimated,not_estimated,model failed: insufficient_regression_rows=0
+CAR_m10_m6,AI_Related_Disclosure_Intensity,0.0035663405391823076,0.010977598604615559,0.324874379874195,0.7452761479277749,272,0.405044245567571,firm_year_fe,firm_clustered,association estimate; not a standalone causal-effect claim
+CAR_m10_m6,AI_RiskRelated_Topic_Share,0.008313684139595066,0.03861284439265637,0.2153087727765586,0.8295265903360622,272,0.405044245567571,firm_year_fe,firm_clustered,association estimate; not a standalone causal-effect claim
+CAR_m10_m6,AI_Risk_Orientation_Proxy,-0.025440923477617724,0.03113865544752194,-0.8170206167216623,0.4139166462204775,272,0.405044245567571,firm_year_fe,firm_clustered,association estimate; not a standalone causal-effect claim
+CAR_m5_m2,AI_Related_Disclosure_Intensity,-0.0026453719270411223,0.009914655241479492,-0.2668143130155248,0.7896121334479115,272,0.33195454831902205,firm_year_fe,firm_clustered,association estimate; not a standalone causal-effect claim
+CAR_m5_m2,AI_RiskRelated_Topic_Share,0.0432537442346874,0.033604893953895744,1.2871263421937709,0.19805025524752606,272,0.33195454831902205,firm_year_fe,firm_clustered,association estimate; not a standalone causal-effect claim
+CAR_m5_m2,AI_Risk_Orientation_Proxy,-0.04333912343614629,0.027996781864753906,-1.5480037543424725,0.12162139260827844,272,0.33195454831902205,firm_year_fe,firm_clustered,association estimate; not a standalone causal-effect claim
+AbnormalVolume_m5_m2,AI_Related_Disclosure_Intensity,0.24695397225644355,0.1445474800055118,1.708462660483786,0.08755052908998649,272,0.520501633334923,firm_year_fe,firm_clustered,association estimate; not a standalone causal-effect claim
+AbnormalVolume_m5_m2,AI_RiskRelated_Topic_Share,0.7054730628462701,0.6127626705449367,1.1512990212326168,0.24960923968910187,272,0.520501633334923,firm_year_fe,firm_clustered,association estimate; not a standalone causal-effect claim
+AbnormalVolume_m5_m2,AI_Risk_Orientation_Proxy,-0.716757847354177,0.4941975353003102,-1.4503468677127722,0.14696181561886137,272,0.520501633334923,firm_year_fe,firm_clustered,association estimate; not a standalone causal-effect claim
