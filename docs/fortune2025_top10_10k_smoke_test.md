@@ -17,6 +17,7 @@ The immediate research direction is to measure **AI disclosure intensity in 10-K
 | Unit | Firm-report-year |
 | Main script | `scripts/collect_fortune2025_top10_10k_test.py` |
 | Seed file | `config/fortune2025_top10_10k_test_seed.csv` |
+| GitHub Actions workflow | `.github/workflows/collect-fortune-top10-10k-smoke-test.yml` |
 
 ## Seed Firms
 
@@ -54,10 +55,8 @@ The script uses `reportDate` as the target-year basis. This is intentional becau
 SEC requests should use a descriptive User-Agent.
 
 ```bash
-export SEC_USER_AGENT="Seung Hyun Choi korea_uni research your-email@example.com"
+export SEC_USER_AGENT="Seung Hyun Choi korea_uni research shch3653@g.skku.edu"
 ```
-
-Replace the email address with an appropriate contact address before running the script.
 
 ## Run Command
 
@@ -65,6 +64,22 @@ From the repository root:
 
 ```bash
 python scripts/collect_fortune2025_top10_10k_test.py
+```
+
+## GitHub Actions Run
+
+The workflow can also be run manually from the GitHub Actions tab.
+
+```text
+Workflow name: Collect Fortune 2025 Top 10 10-K Smoke Test
+Input sec_user_agent default: Seung Hyun Choi korea_uni research shch3653@g.skku.edu
+Input request_sleep_seconds default: 0.25
+```
+
+The workflow uploads results as an artifact named:
+
+```text
+fortune2025-top10-10k-smoke-test-output
 ```
 
 ## Expected Outputs
