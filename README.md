@@ -23,7 +23,7 @@ The empirical design uses 10-K `filing_date` as the event date. AI disclosure va
 | Estimation window | [-250, -30] trading days |
 | CAR windows | `CAR_m1_p1`, `CAR_0_p1`, `CAR_0_p3`, `CAR_0_p5` |
 | Abnormal volume windows | `AbnormalVolume_0_p1`, `AbnormalVolume_0_p3`, `AbnormalVolume_0_p5` |
-| Benchmark priority | `SPY`, then `^GSPC` |
+| Benchmark priority | US500 via FinanceDataReader, then SPY via FinanceDataReader/yfinance, then ^GSPC, IVV, or VOO when available |
 | Placebo windows | `CAR_m10_m6`, `CAR_m5_m2`, `AbnormalVolume_m5_m2` |
 
 Market-model expected returns are estimated as:
@@ -41,11 +41,11 @@ Abnormal returns are summed over event windows. Abnormal volume is computed as a
 | 10-K AI communication panel | `data/processed/fortune2025_top100_final_ai_analysis_text_sample.csv` |
 | Event-study scaffold | `data/derived/market_extension/post_filing_market_reaction_scaffold.csv` |
 | Market data collector | `scripts/collect_market_data_for_10k_event_study.py` |
-| External market source | yfinance, with FinanceDataReader and Stooq CSV fallback in the collector |
+| External market source | Local CSV inputs, FinanceDataReader, and yfinance fallback paths where available |
 
 ## Local Market Data Fallback
 
-If network access to `yfinance` or `Stooq` is blocked in your environment, you can use the local CSV fallback mechanism by placing data in the raw directories:
+If network access to external market data sources is blocked in your environment, you can use the local CSV fallback mechanism by placing data in the raw directories:
 
 **Directory Structure:**
 ```text

@@ -24,7 +24,7 @@ For the 272 successfully estimated events, the descriptive statistics for market
 | `AbnormalVolume_0_p3` | 0.4614 | 0.3194 | 0.8892 | -1.3435 | 4.3411 |
 | `AbnormalVolume_0_p5` | 0.3704 | 0.3343 | 0.7832 | -1.2936 | 4.0436 |
 
-On average, firms experience slightly positive abnormal returns around the filing window (approx. 0.3%). Abnormal volume is generally elevated, with the [0, +1] window showing volume approximately 0.61 standard deviations above the pre-filing mean, indicating significant information processing by the market.
+On average, firms experience slightly positive abnormal returns around the filing window (approx. 0.3%). Abnormal volume is generally elevated, with the [0, +1] window showing volume approximately 0.61 standard deviations above the pre-filing mean. The abnormal volume evidence is consistent with information processing around the filing window.
 
 ## 5. Regression Evidence
 The regression models link AI-disclosure variables (`AI_Related_Disclosure_Intensity`, `AI_RiskRelated_Topic_Share`, `AI_Risk_Orientation_Proxy`) to market outcomes. For all primary models, we utilized **Firm Fixed Effects** and **Year Fixed Effects** with **firm-clustered standard errors** (N=272).
@@ -44,7 +44,7 @@ Pre-filing placebo checks (`CAR_m10_m6`, `CAR_m5_m2`, `AbnormalVolume_m5_m2`) we
 - **Regression Diagnostics:** Models were successfully estimated using a cascade of fixed-effect specifications. 272 usable observations were successfully merged using normalized CIK and filing date keys.
 
 ## 8. Interpretation Summary
-The event-study confirmed significant capital market information processing (abnormal volume) around 10-K filings. However, the short-window abnormal returns are not systematically explained by the variation in AI-related communication intensity or risk-framing. This suggests that the market may already have priced in the AI strategic orientation of these top-tier firms prior to the formal 10-K filing, or that the AI-specific signals are overshadowed by other bundled financials in the report.
+The event-study shows elevated abnormal volume around 10-K filings, consistent with capital-market information processing. However, the short-window abnormal returns are not systematically explained by the variation in AI-related communication intensity or risk-framing. This suggests that the market may already have priced in the AI strategic orientation of these top-tier firms prior to the formal 10-K filing, or that the AI-specific signals are overshadowed by other bundled financials in the report.
 
 ## 9. Limitations
 - AI disclosure variables are text-based communication proxies, not direct AI adoption measures.
