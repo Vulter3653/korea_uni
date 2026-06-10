@@ -1,0 +1,8 @@
+metric,value,note
+master_rows,300,Fortune 2025 Top 100 x 2023-2025 firm-year frame
+text_sample_rows,273,Rows with successful 10-K text
+download_status_counts,failed=24; missing=3; success=273,Final manifest download status
+sample_role_counts,missing_or_audit_row=27; primary_text_sample=273,Primary sample vs audit rows
+industry_enrichment_status_counts,missing_cik=24; success=276,SEC SIC retrieval and NAICS-sector mapping status
+naics_sector_counts,31-33=102; 42=21; 44-45=30; 48-49=21; 51=24; 52=69; 56=6; 62=3,Firm-year counts by approximate NAICS sector code
+naics_warning,"SEC provides SIC, not exact NAICS",Exact 6-digit NAICS requires manual override/crosswalk validation
