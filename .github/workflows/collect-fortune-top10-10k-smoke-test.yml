@@ -1,0 +1,89 @@
+name: Collect Fortune 2025 Top 10 10-K Smoke Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      sec_user_agent:
+        description: "SEC User-Agent contact string. Example: Name project email@example.com"
+        required: true
+        type: string
+      request_sleep_seconds:
+        description: "Delay between SEC requests in seconds"
+        required: false
+        default: "0.25"
+        type: string
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  collect-top10-10k:
+    name: Collect Top 10 10-K filings
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Show collection scope
+        run: |
+          echo "Repository: $GITHUB_REPOSITORY"
+          echo "Workflow: $GITHUB_WORKFLOW"
+          echo "Target: Fortune 2025 Top 10 x report years 2023-2025"
+          echo "Expected manifest rows: 30"
+          echo "Script: scripts/collect_fortune2025_top10_10k_test.py"
+
+      - name: Run Top 10 10-K smoke-test collector
+        env:
+          SEC_USER_AGENT: ${{ inputs.sec_user_agent }}
+          SEC_REQUEST_SLEEP_SECONDS: ${{ inputs.request_sleep_seconds }}
+        run: |
+          python scripts/collect_fortune2025_top10_10k_test.py
+
+      - name: Validate expected output files
+        run: |
+          test -f data/processed/fortune2025_top10_10k_test_manifest.csv
+          test -f data/audit/fortune2025_top10_10k_test_audit.csv
+          echo "Manifest rows including header:"
+          wc -l data/processed/fortune2025_top10_10k_test_manifest.csv
+          echo "Audit rows including header:"
+          wc -l data/audit/fortune2025_top10_10k_test_audit.csv
+
+      - name: Summarize manifest status
+        run: |
+          python - <<'PY'
+          import csv
+          from collections import Counter
+          from pathlib import Path
+
+          manifest = Path('data/processed/fortune2025_top10_10k_test_manifest.csv')
+          rows = list(csv.DictReader(manifest.open(encoding='utf-8')))
+          counts = Counter(row.get('download_status', '') for row in rows)
+          print(f"Total manifest rows: {len(rows)}")
+          print(f"Status counts: {dict(counts)}")
+          print("\nTop rows:")
+          for row in rows[:10]:
+              print(row.get('fortune_rank_2025'), row.get('ticker'), row.get('target_report_year'), row.get('download_status'), row.get('ai_keyword_count'), row.get('ai_keyword_per_10k_words'))
+          PY
+
+      - name: Upload smoke-test outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: fortune2025-top10-10k-smoke-test-output
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            data/processed/fortune2025_top10_10k_test_manifest.csv
+            data/audit/fortune2025_top10_10k_test_audit.csv
+            data/raw/sec_10k_html/test_top10/**
+            data/processed/sec_10k_text/test_top10/**
