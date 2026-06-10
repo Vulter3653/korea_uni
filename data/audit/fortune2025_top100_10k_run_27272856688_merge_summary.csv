@@ -1,0 +1,7 @@
+scope,manifest_rows,audit_rows,success_rows,missing_rows,failed_rows,unavailable_rows,status_counts
+chunk_01,75,7,68,7,0,0,missing=7; success=68
+chunk_02,75,8,67,5,3,0,failed=3; missing=5; success=67
+chunk_03,75,9,66,0,9,0,failed=9; success=66
+chunk_04,75,15,60,3,12,0,failed=12; missing=3; success=60
+ALL_CHUNKS,300,39,261,15,24,0,failed=24; missing=15; success=261
+OUTPUT_SHA256,3b24ef291a4283d9fe175fea3e5184342ef8a477f8cddead2106eaa7693994ad,ff535360cf02fc67fa00df03ade8c2fcd472cd92414cfd3124833bac2f7d704a,,,,,manifest_sha256 in manifest_rows; audit_sha256 in audit_rows
