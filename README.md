@@ -63,7 +63,7 @@ data/raw/market_data/benchmarks/<BENCHMARK>.csv
 - If `adj_close` is missing, `close` will be used as a fallback.
 - If `volume` is missing, abnormal volume calculation will fail, but CARs will still be calculated.
 
-The current run successfully collected market data using the `FinanceDataReader` fallback since `yfinance` network fetching was blocked. CAR, abnormal volume, and regression outputs are fully generated.
+The current run successfully collected market data using the `FinanceDataReader` fallback since `yfinance` network fetching was blocked. CAR and abnormal volume outputs are successfully generated. However, regression models failed to estimate (`insufficient_regression_rows=0`) due to a CIK padding mismatch preventing the merge of AI text features with market outcomes.
 
 ## Sample Construction
 
@@ -136,7 +136,7 @@ Implemented fallback order:
 4. No-FE baseline with controls
 ```
 
-Standard errors use firm-level clustering when feasible and HC1 robust standard errors otherwise. In the current run regression models are estimated successfully with coefficients.
+Standard errors use firm-level clustering when feasible and HC1 robust standard errors otherwise. In the current run, regression models failed to estimate due to the identifier mismatch.
 
 ## Placebo Checks
 
@@ -148,7 +148,7 @@ CAR_m5_m2
 AbnormalVolume_m5_m2
 ```
 
-If AI-related disclosure measures predict post-filing reactions but not pre-filing placebo windows, the evidence is more consistent with a filing-window market response interpretation. The current placebo outputs are successfully estimated.
+If AI-related disclosure measures predict post-filing reactions but not pre-filing placebo windows, the evidence is more consistent with a filing-window market response interpretation. The current placebo models failed to estimate due to the CIK padding mismatch.
 
 ## Reproduction Commands
 
@@ -193,6 +193,7 @@ git diff --check
 
 ## Limitations
 
+- While market data collection succeeded, regression outputs and placebo checks failed to estimate due to a CIK padding mismatch that prevented joining the market outcomes with the AI text measures. No causal inference is currently possible.
 - AI disclosure measures are text-based communication proxies, not direct AI adoption measures.
 - Topic labels are machine-generated/topic-derived labels, not human-validated coding.
 - Sector categories are approximate SEC SIC-derived NAICS enrichment, not fully verified firm-level NAICS classifications.
