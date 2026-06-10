@@ -1,0 +1,16 @@
+k,topic_id,topic_terms,topic_window_count,topic_window_share
+4,0,data; cybersecurity; information; security; including; privacy; laws; systems; attacks; risks; use; cyber; business; risk; regulations,729,0.171368
+4,1,ai; cloud; solutions; services; software; customers; products; data; platform; infrastructure; computing; intel; applications; nvidia; edge,1240,0.29149
+4,2,ai; use; technologies; risks; use ai; business; legal; regulatory; laws; artificial intelligence; artificial; intelligence; including; products; regulations,1249,0.293606
+4,3,products; including; business; changes; services; financial; new; ai; ability; capital; impact; operations; revenue; future; results,1036,0.243535
+5,0,data; laws; regulations; including; privacy; business; protection; laws regulations; information; regulatory; subject; products; changes; requirements; related,526,0.123648
+5,1,products; including; business; services; ai; new; revenue; changes; capital; technology; market; operations; financial; growth; continue,967,0.227315
+5,2,cybersecurity; attacks; security; cyber; information; systems; risk; threats; threat; risks; including; actors; incidents; ai; data,408,0.09591
+5,3,ai; cloud; software; solutions; services; customers; platform; data; computing; intel; products; infrastructure; nvidia; applications; edge,1119,0.263047
+5,4,ai; use; risks; technologies; use ai; business; legal; regulatory; laws; artificial intelligence; artificial; intelligence; products; including; data,1234,0.29008
+6,0,data; laws; regulations; including; privacy; business; protection; information; laws regulations; regulatory; subject; products; requirements; changes; compliance,515,0.121063
+6,1,cloud; ai; software; intel; solutions; nvidia; computing; data; platform; infrastructure; edge; customers; services; workloads; applications,710,0.166902
+6,2,cybersecurity; attacks; security; cyber; information; systems; threats; risk; threat; risks; including; actors; incidents; ai; data,404,0.094969
+6,3,ai; use; risks; technologies; use ai; legal; regulatory; laws; business; regulations; data; harm; artificial intelligence; artificial; including,1068,0.251058
+6,4,ai; products; new; services; technologies; generative; business; development; technology; generative ai; intelligence; capabilities; artificial; artificial intelligence; google,716,0.168312
+6,5,products; including; business; services; changes; revenue; ai; capital; new; technology; financial; future; market; operations; operating,841,0.197696
