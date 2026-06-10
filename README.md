@@ -1,14 +1,14 @@
 # Korea University Research Project Repository
 
-This repository records Korea University research-project materials, implementation notes, dashboard files, and project-local data-pipeline status.
+This repository records Korea University research-project materials, dashboard files, documentation, and project-local data-pipeline status.
 
-## Project Boundary
+## 1. Project Boundary
 
 This repository is an independent project repository.
 
 ```text
 Repository: https://github.com/Vulter3653/korea_uni
-Default project scope: Korea University research project materials, dashboard pages, and related documentation
+Default project scope: Korea University research project materials, dashboard pages, documentation, and project-local data files
 ```
 
 Important distinction:
@@ -18,23 +18,40 @@ Vulter3653/korea_uni and Vulter3653/x_scrapper are separate projects.
 The 10-K status recorded here must be managed as korea_uni project documentation, not as an x_scrapper submodule, mirror, or dependent workflow.
 ```
 
-## Current Research Direction
+## 2. Current Research Direction
 
-The project is being redirected from a news-organization AI adoption dashboard prototype toward a 10-K text-analysis design.
+The repository focus is now Fortune 2025 Top 100 firms AI communication in 10-K reports.
 
 Current working direction:
 
 ```text
-Measure AI disclosure intensity in 10-K reports and examine whether stronger AI-related disclosure functions as a market signal.
+Measure AI disclosure intensity and AI communication patterns in 10-K reports, then use those text measures as a basis for later empirical analysis.
 ```
 
-Immediate collection target:
+The project is no longer merely at the preliminary Top 10 smoke-test stage before Top 100 scaling. The current repository contains the final Fortune 2025 Top 100 x 2023-2025 manifest and sample decision files.
+
+## 3. Current 10-K Dataset Status
+
+The current repository is at the final dataset stage for the Fortune 2025 Top 100 10-K collection track.
+
+| Item | Current status |
+| --- | --- |
+| Target frame | Fortune 2025 Top 100 x report years 2023-2025 |
+| Master frame | 300 firm-year rows |
+| Primary observed 10-K text sample | 273 successful 10-K text rows |
+| Balanced observed text panel | 270 firm-year rows |
+| Final audit / non-success rows | 27 firm-year rows |
+| Missingness treatment | Non-success rows are retained in audit documentation, not silently dropped |
+
+Recommended wording:
 
 ```text
-Fortune 2025 Top 10 smoke test first, then scale to Fortune 2025 Top 100.
+The current repository contains the final Fortune 2025 Top 100 x 2023-2025 manifest and sample decision files. The master frame contains 300 firm-year rows, the observed primary text sample contains 273 successful 10-K text rows, the balanced text panel contains 270 rows, and 27 non-success rows are retained in the final audit classification.
 ```
 
-## Deployed Dashboard
+Do not describe the dataset as if every Fortune 2025 Top 100 firm-year has successful observed 10-K text. The audit frame still contains 27 non-success firm-year rows.
+
+## 4. Deployed Dashboard Status
 
 The project dashboard is deployed through Cloudflare Pages.
 
@@ -52,153 +69,86 @@ https://korea-uni.pages.dev/
   -> ./ai_adoption_news_dashboard.html
 ```
 
-The root `index.html` file redirects visitors to `./ai_adoption_news_dashboard.html`, which contains the dashboard titled **AI Adoption Types in News Organizations and Stock Market Reactions**.
+The dashboard content is currently mixed with legacy news-organization AI adoption material and a newer 10-K sample update. Dashboard alignment with the current 10-K AI communication research direction should be handled in a later task. This document update does not modify the dashboard.
 
-Dashboard scope:
-
-| Item | Description |
-| --- | --- |
-| Research topic | AI adoption types in news organizations and stock market reactions |
-| Treatment types | No AI adoption, AI-assisted adoption, AI-writing adoption |
-| Main methods | Event study and multi-valued DID |
-| Main outcomes | Abnormal return, cumulative abnormal return, abnormal volume |
-| Public URL | `https://korea-uni.pages.dev/` |
-| Local dashboard file | `ai_adoption_news_dashboard.html` |
-
-Operational note:
-
-```text
-If the root Pages URL loads correctly in a browser, the deployment should be treated as the canonical public dashboard link.
-If a direct tool/browser check returns a transient Cloudflare cache miss, verify the repository entry point and Pages deployment status before changing the dashboard path.
-```
-
-## Internal Project Links
+## 5. Internal Project Links
 
 | Item | korea_uni path | Status |
 | --- | --- | --- |
 | Main repository | `https://github.com/Vulter3653/korea_uni` | Active |
 | Public dashboard | `https://korea-uni.pages.dev/` | Canonical Pages link |
 | Pages entry point | `index.html` | Redirects to dashboard HTML |
-| AI adoption dashboard | `ai_adoption_news_dashboard.html` | Active prototype page |
-| README | `README.md` | Updated with project-local status summary and Pages link |
-| Top 10 10-K smoke-test seed | `config/fortune2025_top10_10k_test_seed.csv` | Active test input |
-| Top 10 10-K smoke-test collector | `scripts/collect_fortune2025_top10_10k_test.py` | Ready to run in SEC-accessible environment |
-| Top 10 10-K smoke-test workflow | `.github/workflows/collect-fortune-top10-10k-smoke-test.yml` | Manual GitHub Actions workflow |
-| Top 10 10-K smoke-test note | `docs/fortune2025_top10_10k_smoke_test.md` | Active documentation |
-| 10-K pipeline status note | `docs/fortune2025_10k_pipeline_status.md` | Active documentation |
+| Dashboard file | `ai_adoption_news_dashboard.html` | Active, mixed/legacy content |
+| README | `README.md` | Current repository status summary |
+| 10-K pipeline status note | `docs/fortune2025_10k_pipeline_status.md` | Current final dataset status report |
+| Final manifest | `data/processed/fortune2025_top100_10k_final_manifest.csv` | Present |
+| Final sample decision | `data/processed/fortune2025_top100_10k_final_sample_decision.csv` | Present |
+| Final audit classification | `data/audit/fortune2025_top100_10k_final_audit_classification.csv` | Present |
+| Final analysis master | `data/processed/fortune2025_top100_final_ai_analysis_master.csv` | Present |
+| Final analysis text sample | `data/processed/fortune2025_top100_final_ai_analysis_text_sample.csv` | Present |
+| Final K=5 topic sample | `data/processed/fortune2025_top100_final_ai_analysis_k5_topic_sample.csv` | Present |
 | Original IDX environment note | `.idx/dev.nix` | Environment customization reference |
 
-## AI Adoption News Dashboard Status
+## 6. Final Sample Structure
 
-The current dashboard records a quasi-experimental research design for analyzing how different AI adoption types in news organizations may relate to stock market reactions.
+| Sample | Definition | Firm count | Firm-year count | Primary use |
+| --- | --- | ---: | ---: | --- |
+| `MASTER_FRAME` | All Fortune 2025 Top 100 firms x report years 2023-2025 | 100 | 300 | Coverage and audit denominator |
+| `PRIMARY_TEXT_SAMPLE` | `download_status = success` in the final manifest | 92 | 273 | Main 10-K AI disclosure text analysis |
+| `BALANCED_TEXT_PANEL` | Firms with successful observed 10-K text for all three years | 90 | 270 | Robustness panel |
+| `FINAL_AUDIT` | `download_status != success` in the final manifest | 10 | 27 | Missingness documentation and sensitivity checks |
 
-Current verified repository status:
+Downstream AI-window/topic-analysis sample:
 
-| Item | Status |
+```text
+246 firm-year rows have at least one AI mention window under the selected K=5 topic solution.
+```
+
+This 246-row sample is a downstream topic-analysis subset. It is not the same as the 300-row master frame or the 273-row observed text sample.
+
+## 7. Data and Audit Files
+
+Core 10-K collection status files:
+
+```text
+data/processed/fortune2025_top100_10k_final_manifest.csv
+data/processed/fortune2025_top100_10k_final_sample_decision.csv
+data/audit/fortune2025_top100_10k_final_audit_classification.csv
+```
+
+Downstream analysis files:
+
+```text
+data/processed/fortune2025_top100_final_ai_analysis_master.csv
+data/processed/fortune2025_top100_final_ai_analysis_text_sample.csv
+data/processed/fortune2025_top100_final_ai_analysis_k5_topic_sample.csv
+data/audit/fortune2025_top100_final_ai_analysis_dataset_summary.csv
+data/processed/fortune2025_top100_k5_ai_topic_analysis_dataset.csv
+data/audit/10k_ai_topics/k5_ai_topic_analysis_dataset_summary.csv
+```
+
+The final audit classification retains non-success firm-year rows. Missing rows are part of the documented sample frame and should not be treated as if they were silently excluded.
+
+## 8. Current Limitations
+
+The dataset is suitable for 10-K AI disclosure / AI communication text analysis.
+
+Current limitations:
+
+| Limitation | Status |
 | --- | --- |
-| Dashboard title | AI Adoption Types in News Organizations and Stock Market Reactions |
-| Deployment URL | `https://korea-uni.pages.dev/` |
-| Root redirect | `index.html` redirects to `./ai_adoption_news_dashboard.html` |
-| Main dashboard file | `ai_adoption_news_dashboard.html` |
-| Treatment structure | `AI_Type = 0` no AI, `AI_Type = 1` AI-assisted, `AI_Type = 2` AI-writing |
-| Research design | Event study + multi-valued DID |
-| Key outcome variables | AR, CAR, abnormal volume |
-| Status | Dashboard file exists in the repository and is linked from the root entry point |
+| External reactions | Media response, analyst response, SNS response, and market reaction are not yet measured in the current repository |
+| Industry codes in final manifest | SIC/NAICS industry codes are not yet joined to the final manifest file itself |
+| Dashboard alignment | Dashboard content is not yet fully aligned with the current 10-K AI communication research direction |
+| Workflow hardening | Some workflows may still directly push generated outputs; workflow hardening is a later task |
+| Missing 10-K text rows | 27 non-success firm-year rows remain in the audit frame |
 
-Important methodological update:
+## 9. Next Work Plan
 
-```text
-The dashboard remains a prototype. The active data-collection direction is now 10-K AI disclosure intensity rather than journalist-, article-, or broadcaster-level AI adoption coding.
-```
+Recommended next work:
 
-## Fortune 2025 Top 10 10-K Smoke Test
-
-A Top 10 smoke-test collection setup has been added before scaling to the full Top 100 sample.
-
-| Item | Status |
-| --- | --- |
-| Test universe | Fortune 2025 top 10 firms |
-| Target report years | 2025, 2024, 2023 |
-| Expected manifest size | 10 firms x 3 years = 30 rows |
-| Seed file | `config/fortune2025_top10_10k_test_seed.csv` |
-| Collector script | `scripts/collect_fortune2025_top10_10k_test.py` |
-| GitHub Actions workflow | `.github/workflows/collect-fortune-top10-10k-smoke-test.yml` |
-| Documentation | `docs/fortune2025_top10_10k_smoke_test.md` |
-| Selection basis | `reportDate` / fiscal report period year, not filing-date year |
-| Expected outputs | manifest CSV, audit CSV, raw HTML files, cleaned text files |
-| Preliminary metric | AI keyword count and AI keywords per 10,000 words |
-| Status | Ready to run in SEC-accessible environment |
-
-Run command:
-
-```bash
-export SEC_USER_AGENT="Seung Hyun Choi korea_uni research shch3653@g.skku.edu"
-python scripts/collect_fortune2025_top10_10k_test.py
-```
-
-GitHub Actions manual run:
-
-```text
-Workflow: Collect Fortune 2025 Top 10 10-K Smoke Test
-Input sec_user_agent default: Seung Hyun Choi korea_uni research shch3653@g.skku.edu
-Input request_sleep_seconds default: 0.25
-Artifact: fortune2025-top10-10k-smoke-test-output
-```
-
-Expected output files:
-
-```text
-data/processed/fortune2025_top10_10k_test_manifest.csv
-data/audit/fortune2025_top10_10k_test_audit.csv
-data/raw/sec_10k_html/test_top10/<TICKER>/<YEAR>_<TICKER>_10k.html
-data/processed/sec_10k_text/test_top10/<TICKER>/<YEAR>_<TICKER>_10k.txt
-```
-
-Success criterion:
-
-```text
-Expected rows = 30
-Success rows + documented missing/failed rows = 30
-```
-
-Accurate project wording:
-
-```text
-The current first-stage task is a Fortune 2025 Top 10 smoke test for 2023-2025 10-K reports. The purpose is to validate SEC retrieval, 10-K filing selection, document URL construction, HTML download, text extraction, preliminary AI keyword counting, and audit logging before scaling to Fortune 2025 Top 100.
-```
-
-## Fortune 2025 Top 100 10-K Pipeline Status
-
-The Fortune 2025 top 100 SEC 10-K collection task is recorded here as part of the `korea_uni` project documentation.
-
-Current verified status:
-
-| Item | Status |
-| --- | --- |
-| Target universe | Fortune 2025 top 100 firms |
-| Target report years | 2025, 2024, 2023 |
-| Expected manifest size | 100 firms x 3 years = 300 rows |
-| Collection design | SEC company tickers, SEC submissions metadata, SEC Archives document URL flow |
-| Manifest/index status | Prepared as pipeline target structure |
-| Audit status | Failure/status audit structure prepared |
-| Actual 10-K HTML corpus | Not yet completed in the current execution environment |
-| Required next step | Run Top 10 smoke test first; then scale in an SEC-accessible environment or inject SEC cache files |
-
-Accurate project wording:
-
-```text
-Fortune 2025 top 100 10-K collection pipeline and audit structure are documented for korea_uni; actual full 10-K HTML corpus completion still requires the Top 10 smoke test and then a full rerun in an SEC-accessible environment or SEC cache injection.
-```
-
-Detailed project-local status notes:
-
-```text
-docs/fortune2025_top10_10k_smoke_test.md
-docs/fortune2025_10k_pipeline_status.md
-```
-
-## Original IDX Note
-
-Get started by customizing your environment, defined in the `.idx/dev.nix` file, with the tools and IDE extensions needed for the project.
-
-Learn more from the Google IDX guide.
+1. Align the dashboard content with the current 10-K AI communication research direction.
+2. Add or document external reaction variables only after measurable data sources are selected.
+3. Decide whether industry-code enrichment should be joined directly into the final manifest or kept in downstream analysis files.
+4. Harden GitHub Actions workflows that commit generated outputs directly.
+5. Keep the final audit classification attached to any analysis that uses the observed text sample.

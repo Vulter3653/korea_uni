@@ -2,7 +2,7 @@
 
 ## 1. Project Boundary
 
-This document records the Fortune 2025 top 100 SEC 10-K collection status for the `korea_uni` repository.
+This document records the current Fortune 2025 Top 100 SEC 10-K collection and sample status for the `korea_uni` repository.
 
 ```text
 Repository: https://github.com/Vulter3653/korea_uni
@@ -16,109 +16,104 @@ Vulter3653/korea_uni and Vulter3653/x_scrapper are separate projects.
 This document should not describe korea_uni as a mirror, submodule, or dependent copy of x_scrapper.
 ```
 
-The current goal is not to claim that the full 10-K HTML corpus has already been collected. The verified status is that the project has documented the intended collection scope, SEC source flow, manifest/audit logic, current access limitation, and required next execution step.
+## 2. Current Final Dataset Status
 
-## 2. korea_uni Internal Links
+The current repository contains the final Fortune 2025 Top 100 x 2023-2025 manifest and sample decision files.
 
-| Item | korea_uni path | Status |
-| --- | --- | --- |
-| Main repository | `https://github.com/Vulter3653/korea_uni` | Active |
-| README | `README.md` | Updated |
-| 10-K status note | `docs/fortune2025_10k_pipeline_status.md` | Active |
-| Future manifest location | `config/fortune2025_top100_10k_report_index.csv` | To be added when generated inside korea_uni |
-| Future audit location | `data/audit/fortune2025_top100_10k_report_audit.csv` | To be added when generated inside korea_uni |
-| Future SEC cache location | `data/sec_cache/` | Optional rerun support |
-
-## 3. Collection Scope
-
-Target company universe:
-
-```text
-Fortune 2025 top 100 firms
-```
-
-Target report years:
-
-```text
-2025, 2024, 2023
-```
-
-Expected manifest rows:
-
-```text
-100 firms x 3 years = 300 rows
-```
-
-SEC source flow:
-
-```text
-1. SEC company tickers source
-2. SEC company submissions metadata by CIK
-3. SEC Archives primary 10-K filing document URL
-```
-
-## 4. Current Verified Status in korea_uni
-
-Current status summary:
-
-| Item | Status |
+| Item | Current status |
 | --- | --- |
-| Fortune 2025 top 100 target definition | Documented |
-| 2025/2024/2023 target year definition | Documented |
-| SEC source flow | Documented |
-| Manifest/index CSV inside korea_uni | Not yet generated in this repository |
-| Failure audit CSV inside korea_uni | Not yet generated in this repository |
-| GitHub Actions workflow inside korea_uni | Not yet added in this repository |
-| Actual 10-K HTML report download | Not completed in this repository |
+| Target universe | Fortune 2025 Top 100 firms |
+| Target report years | 2023, 2024, 2025 |
+| Master frame | 300 firm-year rows |
+| Primary observed 10-K text sample | 273 successful 10-K text rows |
+| Balanced observed text panel | 270 firm-year rows |
+| Final audit / non-success rows | 27 firm-year rows |
+| Missingness treatment | Non-success rows are retained in the final audit classification |
 
-Important wording:
+This is a final dataset stage for the current collection track, with documented missingness. It should not be described as complete text coverage for all 300 firm-year rows.
 
-```text
-The current korea_uni state should be described as "10-K collection scope and status documented," not as "10-K corpus collection completed."
-```
+## 3. Sample Definitions
 
-## 5. Current Limitation
+| Sample | Definition | Firm-year count | Use |
+| --- | --- | ---: | --- |
+| `MASTER_FRAME` | 100 firms x 3 report years | 300 | Full denominator and collection coverage frame |
+| `PRIMARY_TEXT_SAMPLE` | Successful 10-K text rows | 273 | Main 10-K AI disclosure / AI communication text analysis |
+| `BALANCED_TEXT_PANEL` | Firms with successful observed text for all three years | 270 | Within-firm robustness panel |
+| `FINAL_AUDIT` | Non-success rows | 27 | Missingness documentation and sensitivity checks |
 
-Actual SEC 10-K HTML report files are not yet present in this repository. The next implementation step must either:
-
-```text
-1. Add and run a korea_uni-local collector script and workflow in an SEC-accessible environment; or
-2. Provide SEC source/cache files and generate the manifest/audit locally within korea_uni.
-```
-
-Recommended future cache structure:
+Additional downstream topic-analysis subset:
 
 ```text
-data/sec_cache/company_tickers.json
-data/sec_cache/submissions/CIK##########.json
+246 firm-year rows have at least one AI mention window under the selected K=5 topic solution.
 ```
 
-Recommended future output structure:
+The 246-row K=5 topic sample is a downstream AI-window/topic-model analysis sample, not the collection master frame.
 
-```text
-config/fortune2025_top100_10k_report_index.csv
-data/audit/fortune2025_top100_10k_report_audit.csv
-data/sec_10k_reports/{rank}_{company_slug}_{year}_10k.html
-```
+## 4. File Inventory
 
-## 6. Required Next Step
+Core final sample and audit files:
 
-The next step for `korea_uni` is implementation within this repository, not reliance on another repository.
+| File | Role |
+| --- | --- |
+| `data/processed/fortune2025_top100_10k_final_manifest.csv` | 300-row final collection manifest |
+| `data/processed/fortune2025_top100_10k_final_sample_decision.csv` | Sample definitions and inclusion rules |
+| `data/audit/fortune2025_top100_10k_final_audit_classification.csv` | 27-row non-success audit classification |
 
-Recommended execution route:
+Downstream analysis and topic-model files:
 
-```text
-1. Add a korea_uni-local SEC 10-K collector script.
-2. Generate the 300-row Fortune 2025 top 100 x 3-year manifest in korea_uni.
-3. Generate a failure/status audit file in korea_uni.
-4. If SEC access is blocked, record the failure stage and HTTP status.
-5. Rerun in an SEC-accessible environment or inject SEC cache files.
-```
+| File | Role |
+| --- | --- |
+| `data/processed/fortune2025_top100_final_ai_analysis_master.csv` | Final 300-row analysis master |
+| `data/processed/fortune2025_top100_final_ai_analysis_text_sample.csv` | 273-row observed text analysis sample |
+| `data/processed/fortune2025_top100_final_ai_analysis_k5_topic_sample.csv` | 246-row K=5 AI-window topic sample |
+| `data/audit/fortune2025_top100_final_ai_analysis_dataset_summary.csv` | Final analysis dataset summary |
+| `data/processed/fortune2025_top100_k5_ai_topic_analysis_dataset.csv` | K=5 topic-analysis dataset |
+| `data/audit/10k_ai_topics/k5_ai_topic_analysis_dataset_summary.csv` | K=5 topic-analysis summary |
 
-## 7. Defensive Research Statement
+## 5. Audit and Missingness Treatment
+
+The final manifest keeps the full 300 firm-year sampling frame. The observed primary text sample includes 273 successful 10-K text rows. The final audit classification retains 27 non-success rows.
+
+The non-success rows are not silently dropped. They are retained as documented missingness and should be considered when reporting sample construction, coverage, and robustness.
+
+Current audit structure:
+
+| Audit category | Treatment |
+| --- | --- |
+| Firms with no collected 10-K text across all three years | Retain in the master frame and classify as missing across all three years |
+| Firms with partial 10-K missingness | Retain observed years in text analysis and retain missing years in audit documentation |
+| Non-success firm-year rows | Treat as missing values with row-level audit classification |
+
+## 6. Remaining Limitations
+
+The dataset is suitable for 10-K AI disclosure / AI communication text analysis.
+
+Remaining limitations:
+
+| Limitation | Current status |
+| --- | --- |
+| External reactions | Media response, analyst response, SNS response, and market reaction are not yet measured in the current repository |
+| SIC/NAICS in final manifest | Industry codes such as SIC/NAICS are not yet joined to the final manifest file itself |
+| Dashboard alignment | Dashboard content is not yet fully aligned with the current 10-K AI communication research direction |
+| Workflow hardening | Some workflows may still directly push generated outputs; workflow hardening is a later task |
+| Incomplete text coverage | 27 non-success firm-year rows remain in the audit frame |
+
+## 7. Recommended Next Steps
+
+Recommended next steps:
+
+1. Keep the 300-row master frame and 27-row audit classification attached to any reported analysis.
+2. Use the 273-row primary text sample for main 10-K AI disclosure / AI communication text analysis.
+3. Use the 270-row balanced text panel for within-firm robustness checks.
+4. Use the 246-row K=5 AI-window/topic-model sample only when the analysis requires observed AI mention windows.
+5. Decide whether SIC/NAICS enrichment should be joined directly into the final manifest or remain in downstream analysis files.
+6. Align the public dashboard with the current 10-K AI communication research direction in a later task.
+7. Harden workflows that directly commit and push generated outputs.
+
+## 8. Defensive Research Statement
 
 Use the following statement when reporting the current status:
 
 ```text
-At this stage, korea_uni has documented the Fortune 2025 top 100 10-K collection scope, expected manifest structure, SEC source flow, and current corpus limitation. The full 10-K HTML corpus is not yet completed inside this repository. Completion requires a korea_uni-local rerun in an SEC-accessible environment or SEC cache injection followed by manifest and audit generation.
+The current repository contains the final Fortune 2025 Top 100 x 2023-2025 manifest and sample decision files. The master frame contains 300 firm-year rows, the observed primary text sample contains 273 successful 10-K text rows, the balanced text panel contains 270 rows, and 27 non-success rows are retained in the final audit classification. The dataset is suitable for 10-K AI disclosure / AI communication text analysis, but it should not be described as complete observed 10-K text coverage for all 300 firm-year rows.
 ```
