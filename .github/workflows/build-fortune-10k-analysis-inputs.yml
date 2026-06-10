@@ -1,0 +1,116 @@
+name: Build Fortune 2025 10-K Analysis Inputs
+
+on:
+  workflow_dispatch:
+    inputs:
+      sec_user_agent:
+        description: "SEC User-Agent contact string"
+        required: true
+        default: "Seung Hyun Choi korea_uni research shch3653@g.skku.edu"
+        type: string
+      request_sleep_seconds:
+        description: "Delay between SEC requests in seconds"
+        required: false
+        default: "0.50"
+        type: string
+      commit_csv_to_repo:
+        description: "Commit generated CSV outputs to repository"
+        required: true
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-analysis-inputs:
+    name: Build linked 10-K and industry CSV inputs
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate required final manifest files
+        run: |
+          test -f data/processed/fortune2025_top100_10k_final_manifest.csv
+          test -f data/audit/fortune2025_top100_10k_final_audit_classification.csv
+
+      - name: Build Fortune 2025 10-K analysis input CSVs
+        env:
+          SEC_USER_AGENT: ${{ inputs.sec_user_agent }}
+          SEC_REQUEST_SLEEP_SECONDS: ${{ inputs.request_sleep_seconds }}
+        run: |
+          python scripts/build_fortune2025_10k_analysis_inputs.py
+
+      - name: Validate generated CSV outputs
+        run: |
+          test -f data/processed/fortune2025_top100_10k_report_linked_master.csv
+          test -f data/processed/fortune2025_top100_10k_report_linked_text_sample.csv
+          test -f data/processed/fortune2025_top100_10k_report_linked_with_industry.csv
+          test -f data/audit/fortune2025_top100_10k_report_linked_build_summary.csv
+          echo "Linked master lines including header:"
+          wc -l data/processed/fortune2025_top100_10k_report_linked_master.csv
+          echo "Linked text sample lines including header:"
+          wc -l data/processed/fortune2025_top100_10k_report_linked_text_sample.csv
+          echo "Industry linked lines including header:"
+          wc -l data/processed/fortune2025_top100_10k_report_linked_with_industry.csv
+          echo "Build summary:"
+          cat data/audit/fortune2025_top100_10k_report_linked_build_summary.csv
+          python - <<'PY'
+          import csv
+          master = list(csv.DictReader(open('data/processed/fortune2025_top100_10k_report_linked_master.csv', encoding='utf-8')))
+          text = list(csv.DictReader(open('data/processed/fortune2025_top100_10k_report_linked_text_sample.csv', encoding='utf-8')))
+          industry = list(csv.DictReader(open('data/processed/fortune2025_top100_10k_report_linked_with_industry.csv', encoding='utf-8')))
+          if len(master) != 300:
+              raise SystemExit(f"Expected 300 master rows, found {len(master)}")
+          if len(text) != 273:
+              raise SystemExit(f"Expected 273 text sample rows, found {len(text)}")
+          if len(industry) != 300:
+              raise SystemExit(f"Expected 300 industry rows, found {len(industry)}")
+          print('Validation PASS')
+          PY
+
+      - name: Commit generated CSV outputs to repository
+        if: ${{ inputs.commit_csv_to_repo == 'true' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            data/processed/fortune2025_top100_10k_report_linked_master.csv \
+            data/processed/fortune2025_top100_10k_report_linked_text_sample.csv \
+            data/processed/fortune2025_top100_10k_report_linked_with_industry.csv \
+            data/audit/fortune2025_top100_10k_report_linked_build_summary.csv
+          if git diff --cached --quiet; then
+            echo "No generated CSV changes to commit."
+          else
+            git commit -m "data: add fortune top100 linked 10-k analysis inputs"
+            git push
+          fi
+
+      - name: Upload generated CSV outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: fortune2025-top100-10k-analysis-inputs
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            data/processed/fortune2025_top100_10k_report_linked_master.csv
+            data/processed/fortune2025_top100_10k_report_linked_text_sample.csv
+            data/processed/fortune2025_top100_10k_report_linked_with_industry.csv
+            data/audit/fortune2025_top100_10k_report_linked_build_summary.csv
