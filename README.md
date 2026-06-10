@@ -83,6 +83,7 @@ If a direct tool/browser check returns a transient Cloudflare cache miss, verify
 | README | `README.md` | Updated with project-local status summary and Pages link |
 | Top 10 10-K smoke-test seed | `config/fortune2025_top10_10k_test_seed.csv` | Active test input |
 | Top 10 10-K smoke-test collector | `scripts/collect_fortune2025_top10_10k_test.py` | Ready to run in SEC-accessible environment |
+| Top 10 10-K smoke-test workflow | `.github/workflows/collect-fortune-top10-10k-smoke-test.yml` | Manual GitHub Actions workflow |
 | Top 10 10-K smoke-test note | `docs/fortune2025_top10_10k_smoke_test.md` | Active documentation |
 | 10-K pipeline status note | `docs/fortune2025_10k_pipeline_status.md` | Active documentation |
 | Original IDX environment note | `.idx/dev.nix` | Environment customization reference |
@@ -121,6 +122,7 @@ A Top 10 smoke-test collection setup has been added before scaling to the full T
 | Expected manifest size | 10 firms x 3 years = 30 rows |
 | Seed file | `config/fortune2025_top10_10k_test_seed.csv` |
 | Collector script | `scripts/collect_fortune2025_top10_10k_test.py` |
+| GitHub Actions workflow | `.github/workflows/collect-fortune-top10-10k-smoke-test.yml` |
 | Documentation | `docs/fortune2025_top10_10k_smoke_test.md` |
 | Selection basis | `reportDate` / fiscal report period year, not filing-date year |
 | Expected outputs | manifest CSV, audit CSV, raw HTML files, cleaned text files |
@@ -130,8 +132,17 @@ A Top 10 smoke-test collection setup has been added before scaling to the full T
 Run command:
 
 ```bash
-export SEC_USER_AGENT="Seung Hyun Choi korea_uni research your-email@example.com"
+export SEC_USER_AGENT="Seung Hyun Choi korea_uni research shch3653@g.skku.edu"
 python scripts/collect_fortune2025_top10_10k_test.py
+```
+
+GitHub Actions manual run:
+
+```text
+Workflow: Collect Fortune 2025 Top 10 10-K Smoke Test
+Input sec_user_agent default: Seung Hyun Choi korea_uni research shch3653@g.skku.edu
+Input request_sleep_seconds default: 0.25
+Artifact: fortune2025-top10-10k-smoke-test-output
 ```
 
 Expected output files:
