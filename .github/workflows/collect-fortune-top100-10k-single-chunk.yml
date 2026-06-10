@@ -1,0 +1,129 @@
+name: Collect Fortune 2025 Top 100 10-K Single Chunk
+
+on:
+  workflow_dispatch:
+    inputs:
+      chunk_id:
+        description: "Chunk ID to collect: 1, 2, 3, or 4"
+        required: true
+        default: "1"
+        type: choice
+        options:
+          - "1"
+          - "2"
+          - "3"
+          - "4"
+      sec_user_agent:
+        description: "SEC User-Agent contact string"
+        required: true
+        default: "Seung Hyun Choi korea_uni research shch3653@g.skku.edu"
+        type: string
+      request_sleep_seconds:
+        description: "Delay between SEC requests in seconds"
+        required: false
+        default: "0.50"
+        type: string
+      chunk_size:
+        description: "Number of firms per chunk"
+        required: false
+        default: "25"
+        type: string
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  collect-single-chunk:
+    name: Collect Top 100 10-K chunk ${{ inputs.chunk_id }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Show chunk collection scope
+        run: |
+          echo "Repository: $GITHUB_REPOSITORY"
+          echo "Workflow: $GITHUB_WORKFLOW"
+          echo "Target: Fortune 2025 Top 100 single chunk x report years 2023-2025"
+          echo "Chunk ID: ${{ inputs.chunk_id }}"
+          echo "Chunk size: ${{ inputs.chunk_size }}"
+          echo "Expected rows in chunk: 75"
+          echo "SEC request sleep seconds: ${{ inputs.request_sleep_seconds }}"
+          echo "Script: scripts/collect_fortune2025_top100_10k_reports.py"
+
+      - name: Check Top 100 seed exists
+        run: |
+          test -f config/fortune2025_top100_10k_collection_seed.csv
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+          path = Path('config/fortune2025_top100_10k_collection_seed.csv')
+          rows = list(csv.DictReader(path.open(encoding='utf-8-sig')))
+          print(f"Seed rows: {len(rows)}")
+          if len(rows) < 100:
+              raise SystemExit(f"Expected at least 100 seed rows, found {len(rows)}")
+          PY
+
+      - name: Run Top 100 10-K collector for selected chunk
+        env:
+          SEC_USER_AGENT: ${{ inputs.sec_user_agent }}
+          SEC_REQUEST_SLEEP_SECONDS: ${{ inputs.request_sleep_seconds }}
+          CHUNK_ID: ${{ inputs.chunk_id }}
+          CHUNK_SIZE: ${{ inputs.chunk_size }}
+        run: |
+          python scripts/collect_fortune2025_top100_10k_reports.py
+
+      - name: Validate selected chunk output files
+        run: |
+          CHUNK_LABEL=$(printf "chunk_%02d" "${{ inputs.chunk_id }}")
+          test -f "data/processed/fortune2025_top100_10k_${CHUNK_LABEL}_manifest.csv"
+          test -f "data/audit/fortune2025_top100_10k_${CHUNK_LABEL}_audit.csv"
+          echo "Manifest rows including header:"
+          wc -l "data/processed/fortune2025_top100_10k_${CHUNK_LABEL}_manifest.csv"
+          echo "Audit rows including header:"
+          wc -l "data/audit/fortune2025_top100_10k_${CHUNK_LABEL}_audit.csv"
+
+      - name: Summarize selected chunk manifest status
+        env:
+          CHUNK_ID: ${{ inputs.chunk_id }}
+        run: |
+          python - <<'PY'
+          import csv
+          import os
+          from collections import Counter
+          from pathlib import Path
+          chunk_id = int(os.environ['CHUNK_ID'])
+          chunk_label = f"chunk_{chunk_id:02d}"
+          manifest = Path(f'data/processed/fortune2025_top100_10k_{chunk_label}_manifest.csv')
+          rows = list(csv.DictReader(manifest.open(encoding='utf-8')))
+          counts = Counter(row.get('download_status', '') for row in rows)
+          print(f"Chunk: {chunk_label}")
+          print(f"Total manifest rows: {len(rows)}")
+          print(f"Status counts: {dict(counts)}")
+          print("\nFirst 12 rows:")
+          for row in rows[:12]:
+              print(row.get('fortune_rank_2025'), row.get('ticker'), row.get('target_report_year'), row.get('download_status'), row.get('failure_reason'), row.get('ai_keyword_count'), row.get('ai_keyword_per_10k_words'))
+          PY
+
+      - name: Upload selected chunk artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fortune2025-top100-10k-single-chunk-${{ inputs.chunk_id }}
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            data/processed/fortune2025_top100_10k_chunk_0${{ inputs.chunk_id }}_manifest.csv
+            data/audit/fortune2025_top100_10k_chunk_0${{ inputs.chunk_id }}_audit.csv
+            data/raw/sec_10k_html/top100/chunk_0${{ inputs.chunk_id }}/**
+            data/processed/sec_10k_text/top100/chunk_0${{ inputs.chunk_id }}/**
