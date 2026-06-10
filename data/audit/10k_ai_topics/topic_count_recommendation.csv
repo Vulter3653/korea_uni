@@ -1,0 +1,8 @@
+metric,value,note
+recommended_n_topics,4,Highest composite_score across candidate K values
+recommended_composite_score,0.694785,"Mean of normalized silhouette, inverted Davies-Bouldin, Calinski-Harabasz, UMass coherence, and min-topic-share"
+candidate_range,4-20,Evaluated inclusive range
+n_windows,4254,AI mention windows used for optimization
+window_size,1,AI sentence +/- window size
+embedding_method,sentence_bert:sentence-transformers/all-MiniLM-L6-v2,Sentence-BERT preferred unless TF-IDF fallback requested or needed
+selection_rule,argmax(composite_score),Do not set topic count arbitrarily; use this optimization output before final topic modeling
