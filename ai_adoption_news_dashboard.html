@@ -3,45 +3,149 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AI Adoption Types in News Organizations and Stock Market Reactions</title>
+  <title>Fortune 2025 Top 100 10-K AI Disclosure Dashboard</title>
   <style>
     :root{--bg:#f6f7fb;--panel:#fff;--ink:#172033;--muted:#667085;--line:#e6e9f0;--blue:#2557d6;--blue2:#eaf0ff;--green:#1d8b5f;--green2:#e9f8f1;--red:#b42318;--red2:#fff0ed;--amber:#b76e00;--amber2:#fff6df;--violet:#6b3fcf;--violet2:#f2edff;--shadow:0 18px 45px rgba(23,32,51,.08);--radius:18px;--space:clamp(16px,2.2vw,34px)}
-    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;font-size:clamp(14px,.95vw,16px);line-height:1.62}a{color:var(--blue);text-decoration:none}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;font-size:clamp(14px,.95vw,16px);line-height:1.62}a{color:var(--blue);text-decoration:none}code{padding:2px 6px;border-radius:7px;background:#f2f4f7;color:#344054}
     .app{display:grid;grid-template-columns:minmax(220px,280px) minmax(0,1fr);min-height:100vh}aside{position:sticky;top:0;height:100vh;overflow:auto;padding:clamp(18px,2vw,26px) 20px;border-right:1px solid var(--line);background:rgba(255,255,255,.88);backdrop-filter:blur(14px)}main{width:min(100%,1500px);margin:0 auto;padding:var(--space)}
-    .brand{margin-bottom:8px;font-size:clamp(17px,1.4vw,20px);font-weight:800;line-height:1.25}.brand small{display:block;margin-top:8px;color:var(--muted);font-size:12px;font-weight:650}nav{display:flex;flex-direction:column;gap:8px;margin-top:24px}nav a,.download{border-radius:12px;font-size:14px;font-weight:700}nav a{padding:10px 12px;color:#344054}nav a:hover{background:#eef2ff;color:var(--blue)}.download{display:block;margin-top:24px;padding:14px;background:#101828;color:#fff;text-align:center}
-    .hero{position:relative;overflow:hidden;padding:clamp(24px,4vw,42px);border-radius:clamp(20px,2.4vw,30px);background:linear-gradient(135deg,#122045 0%,#203c8f 58%,#5f7cff 100%);color:#fff;box-shadow:var(--shadow)}.hero:after{content:"";position:absolute;right:-90px;top:-90px;width:clamp(180px,22vw,280px);height:clamp(180px,22vw,280px);border-radius:50%;background:rgba(255,255,255,.14)}.hero h1{position:relative;z-index:1;max-width:980px;margin:0 0 10px;font-size:clamp(28px,4.2vw,54px);line-height:1.1}.hero p{position:relative;z-index:1;max-width:980px;margin:0;font-size:clamp(15px,1.45vw,19px);opacity:.92}.meta{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
-    .pill,.tag,.direction{display:inline-flex;align-items:center;max-width:100%;overflow-wrap:anywhere;border-radius:999px;font-weight:800}.pill{padding:8px 12px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.15);color:#fff;font-size:13px}section{margin-top:clamp(20px,2vw,28px)}.section-title{display:flex;align-items:end;justify-content:space-between;gap:20px;margin:0 0 16px}.section-title h2{margin:0;font-size:clamp(21px,2.1vw,30px);line-height:1.2}.section-title p{margin:0;color:var(--muted);font-size:14px;text-align:right}
-    .grid,.hypothesis-grid,.flow,.pipeline{display:grid;gap:16px}.cols-4{grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr))}.cols-3,.treatments{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))}.cols-2{grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr))}.flow{grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr))}.pipeline{grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr))}.hypothesis-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
-    .card,.treatment-card,.hypothesis-card,.chart-card,.step,.pipe,details{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);box-shadow:0 8px 24px rgba(23,32,51,.04)}.card,.treatment-card,.hypothesis-card,.chart-card{padding:clamp(18px,2vw,24px)}.card h3,.treatment-card h3,.chart-card h3{margin:0 0 10px;font-size:clamp(17px,1.4vw,21px);line-height:1.25}.card p,.treatment-card p,.hypothesis-card p,.chart-card p{margin:0;color:#475467}.kpi{min-height:clamp(140px,14vw,170px)}.kpi .num{margin-bottom:4px;font-size:clamp(30px,3vw,38px);font-weight:850;line-height:1}.kpi .label{font-size:15px;font-weight:800}.kpi .desc{margin-top:8px;color:var(--muted);font-size:13px}
-    .blue{background:var(--blue2)}.green{background:var(--green2)}.red{background:var(--red2)}.amber{background:var(--amber2)}.violet{background:var(--violet2)}.tag{margin-bottom:10px;padding:6px 10px;font-size:12px}.tag.blue{color:var(--blue)}.tag.green{color:var(--green)}.tag.red{color:var(--red)}.tag.amber{color:var(--amber)}.tag.violet{color:var(--violet)}.treatment-card ul{margin:12px 0 0;padding-left:18px;color:#475467}.treatment-card li{margin:6px 0}.step{min-height:128px;padding:18px}.step strong,.pipe b{display:block;margin-bottom:8px;color:#101828}.step span,.pipe span{color:var(--muted);font-size:13px}
-    .hypothesis-card{min-height:175px}.hypothesis-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}.badge{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:44px;height:32px;border-radius:12px;background:#101828;color:#fff;font-weight:900}.direction{padding:5px 8px;background:var(--blue2);color:var(--blue);font-size:12px}.hypothesis-card h4{margin:0 0 8px;font-size:16px;line-height:1.3}.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:#fff}table{width:100%;min-width:720px;border-collapse:collapse}th,td{padding:14px 16px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#f9fafb;color:#344054;font-size:13px}td{color:#475467;font-size:14px}tr:last-child td{border-bottom:0}
-    .bars{display:grid;gap:13px;margin-top:16px}.bar-row{display:grid;grid-template-columns:minmax(92px,130px) minmax(90px,1fr) 52px;gap:10px;align-items:center;font-size:13px}.bar-bg{height:12px;overflow:hidden;border-radius:999px;background:#eff2f7}.bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#6b8cff,#2557d6)}.axis-note,.footer{color:var(--muted);font-size:12px}.axis-note{margin-top:12px}.pipe{min-height:110px;padding:14px;font-size:13px}.footer{margin:28px 0 8px;text-align:center}
+    .brand{margin-bottom:8px;font-size:clamp(17px,1.4vw,20px);font-weight:850;line-height:1.25}.brand small{display:block;margin-top:8px;color:var(--muted);font-size:12px;font-weight:650}nav{display:flex;flex-direction:column;gap:8px;margin-top:24px}nav a,.download{border-radius:12px;font-size:14px;font-weight:750}nav a{padding:10px 12px;color:#344054}nav a:hover{background:#eef2ff;color:var(--blue)}.download{display:block;margin-top:24px;padding:14px;background:#101828;color:#fff;text-align:center}
+    .hero{position:relative;overflow:hidden;padding:clamp(24px,4vw,42px);border-radius:clamp(20px,2.4vw,30px);background:linear-gradient(135deg,#0f1f3d 0%,#1f3f91 55%,#5f7cff 100%);color:#fff;box-shadow:var(--shadow)}.hero:after{content:"";position:absolute;right:-90px;top:-90px;width:clamp(180px,22vw,280px);height:clamp(180px,22vw,280px);border-radius:50%;background:rgba(255,255,255,.14)}.hero h1{position:relative;z-index:1;max-width:1060px;margin:0 0 10px;font-size:clamp(28px,4.1vw,52px);line-height:1.1}.hero p{position:relative;z-index:1;max-width:1040px;margin:0;font-size:clamp(15px,1.35vw,19px);opacity:.92}.meta{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.pill,.tag{display:inline-flex;align-items:center;max-width:100%;overflow-wrap:anywhere;border-radius:999px;font-weight:800}.pill{padding:8px 12px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.15);color:#fff;font-size:13px}
+    section{margin-top:clamp(20px,2vw,28px)}.section-title{display:flex;align-items:end;justify-content:space-between;gap:20px;margin:0 0 16px}.section-title h2{margin:0;font-size:clamp(21px,2.1vw,30px);line-height:1.2}.section-title p{margin:0;color:var(--muted);font-size:14px;text-align:right}.grid{display:grid;gap:16px}.cols-4{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}.cols-3{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))}.cols-2{grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr))}
+    .card,.chart-card,.step,details{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);box-shadow:0 8px 24px rgba(23,32,51,.04)}.card,.chart-card{padding:clamp(18px,2vw,24px)}.card h3,.chart-card h3{margin:0 0 10px;font-size:clamp(17px,1.4vw,21px);line-height:1.25}.card p,.chart-card p{margin:0;color:#475467}.kpi{min-height:150px}.kpi .num{margin-bottom:4px;font-size:clamp(30px,3vw,40px);font-weight:900;line-height:1}.kpi .label{font-size:15px;font-weight:850}.kpi .desc{margin-top:8px;color:var(--muted);font-size:13px}.blue{background:var(--blue2)}.green{background:var(--green2)}.red{background:var(--red2)}.amber{background:var(--amber2)}.violet{background:var(--violet2)}.tag{margin-bottom:10px;padding:6px 10px;font-size:12px}.tag.blue{color:var(--blue)}.tag.green{color:var(--green)}.tag.red{color:var(--red)}.tag.amber{color:var(--amber)}.tag.violet{color:var(--violet)}
+    .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:#fff}table{width:100%;min-width:760px;border-collapse:collapse}th,td{padding:14px 16px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#f9fafb;color:#344054;font-size:13px}td{color:#475467;font-size:14px}tr:last-child td{border-bottom:0}.bars{display:grid;gap:13px;margin-top:16px}.bar-row{display:grid;grid-template-columns:minmax(120px,160px) minmax(120px,1fr) 70px;gap:10px;align-items:center;font-size:13px}.bar-bg{height:12px;overflow:hidden;border-radius:999px;background:#eff2f7}.bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#6b8cff,#2557d6)}.bar-fill.green{background:linear-gradient(90deg,#76d6a8,#1d8b5f)}.bar-fill.amber{background:linear-gradient(90deg,#ffd27a,#b76e00)}.bar-fill.red{background:linear-gradient(90deg,#ff9b8f,#b42318)}.axis-note,.footer{color:var(--muted);font-size:12px}.axis-note{margin-top:12px}.step{min-height:124px;padding:18px}.step strong{display:block;margin-bottom:8px;color:#101828}.step span{color:var(--muted);font-size:13px}.footer{margin:28px 0 8px;text-align:center}
     @media(max-width:1100px){.app{grid-template-columns:1fr}aside{position:relative;height:auto}nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}.download{width:fit-content}}@media(max-width:720px){.section-title{align-items:start;flex-direction:column}.section-title p{text-align:left}.hero{border-radius:20px}.bar-row{grid-template-columns:1fr}table{min-width:640px}}
   </style>
 </head>
 <body>
   <div class="app">
     <aside>
-      <div class="brand">AI Adoption Dashboard<small>Quasi-experimental research design for news organizations</small></div>
-      <nav><a href="#overview">Overview</a><a href="#treatment">AI Adoption Types</a><a href="#theory">Background Theory</a><a href="#hypotheses">Hypotheses</a><a href="#design">Research Design</a><a href="#evidence">Model-Free Evidence</a><a href="#data">Data and Variables</a><a href="#robustness">Robustness</a></nav>
+      <div class="brand">10-K AI Disclosure Dashboard<small>Fortune 2025 Top 100 · 2023–2025</small></div>
+      <nav>
+        <a href="#overview">Overview</a>
+        <a href="#sample">Final Sample</a>
+        <a href="#coverage">Collection Coverage</a>
+        <a href="#audit">Audit Classification</a>
+        <a href="#metrics">AI Disclosure Metrics</a>
+        <a href="#workflow">Data Pipeline</a>
+        <a href="#files">Repository Files</a>
+      </nav>
+      <a class="download" href="data/processed/fortune2025_top100_10k_final_sample_decision.csv">Download sample decision CSV</a>
     </aside>
     <main>
       <header class="hero" id="overview">
-        <h1>AI Adoption Types in News Organizations and Stock Market Reactions</h1>
-        <p>Comparing AI-assisted journalism, AI-written journalism, and non-adoption through event study and multi-valued DID designs.</p>
-        <div class="meta"><span class="pill">Author: 2026KG0018 Seung Hyun Choi</span><span class="pill">Method: Event Study + Multi-valued DID</span><span class="pill">Treatment: 0 No AI / 1 Assisted / 2 Written</span><span class="pill">Outcomes: AR, CAR, Abnormal Volume</span></div>
+        <h1>Fortune 2025 Top 100 10-K AI Disclosure Dashboard</h1>
+        <p>This dashboard records the final 10-K collection frame, sample decision, missingness treatment, and audit status for measuring AI disclosure intensity in annual reports.</p>
+        <div class="meta">
+          <span class="pill">Frame: Fortune 2025 Top 100</span>
+          <span class="pill">Years: 2023–2025</span>
+          <span class="pill">Master frame: 300 firm-years</span>
+          <span class="pill">Primary text sample: 273 firm-years</span>
+        </div>
       </header>
-      <section><div class="grid cols-4"><div class="card kpi blue"><div class="num">3</div><div class="label">AI Adoption Types</div><div class="desc">No adoption, AI-assisted adoption, and AI-writing adoption as a multi-valued treatment.</div></div><div class="card kpi green"><div class="num">5</div><div class="label">Event Windows</div><div class="desc">CAR[0,+1], [-1,+1], [-3,+3], [-5,+5], and [+2,+10].</div></div><div class="card kpi amber"><div class="num">3</div><div class="label">Core Hypotheses</div><div class="desc">Adoption type and stock market reaction are tested directly; credibility, machine heuristic, and signaling effect remain background theory.</div></div><div class="card kpi violet"><div class="num">4</div><div class="label">Theory Blocks</div><div class="desc">Source credibility, machine heuristic, and signaling effect.</div></div></div></section>
-      <section id="treatment"><div class="section-title"><h2>1. AI Adoption Types</h2><p>Main treatment variable: AI_Type = 0, 1, 2</p></div><div class="grid treatments"><article class="treatment-card"><span class="tag amber">AI_Type = 0</span><h3>No AI Adoption</h3><p>News or media firms with no official AI adoption announcement during the sample period.</p><ul><li>Baseline group for DID</li><li>Candidate matched controls</li><li>Useful for placebo event dates</li></ul></article><article class="treatment-card"><span class="tag green">AI_Type = 1</span><h3>AI-Assisted Adoption</h3><p>AI supports search, summarization, translation, data organization, fact-checking, editing, or drafting.</p><ul><li>AI as a tool</li><li>Human-AI complementarity</li><li>Efficiency and productivity signal</li></ul></article><article class="treatment-card"><span class="tag red">AI_Type = 2</span><h3>AI-Writing Adoption</h3><p>AI is presented as a direct producer or presenter of news content, such as automated articles or AI anchors.</p><ul><li>AI as a communicator</li><li>Change in perceived authorship</li><li>Trust and accountability concerns</li></ul></article></div></section>
-      <section id="theory"><div class="section-title"><h2>2. Background Theory</h2><p>Source credibility, machine heuristic, and signaling effect explain why AI roles matter</p></div><div class="flow"><div class="step"><strong>AI Adoption Type</strong><span>No AI, AI-assisted, or AI-written journalism.</span></div><div class="step"><strong>Source Attribution</strong><span>Readers infer whether the message comes from human editorial judgment or an automated system.</span></div><div class="step"><strong>Credibility Evaluation</strong><span>Expertise, trustworthiness, transparency, and accountability shape perceived news quality.</span></div><div class="step"><strong>Audience Signal</strong><span>Google Trends-based public interest becomes the observable audience-attention proxy.</span></div><div class="step"><strong>Market Reaction</strong><span>Investors translate credibility and audience response into AR, CAR, volume, and volatility.</span></div></div><div class="grid cols-3" style="margin-top:16px"><div class="card"><span class="tag blue">Source Credibility</span><h3>Expertise and Trustworthiness</h3><p>News credibility depends on whether the source is viewed as competent, accountable, and trustworthy. AI-writing adoption can weaken source credibility if readers perceive the article source as less transparent or less responsible than a human journalist.</p></div><div class="card"><span class="tag violet">Machine Heuristic</span><h3>Automation as a Mental Shortcut</h3><p>When audiences see a machine as the content producer, they may use a machine heuristic: AI can be perceived as efficient and data-driven, but also cold, less contextual, and less morally accountable.</p></div><div class="card"><span class="tag amber">Signaling Effect</span><h3>Investor Interpretation</h3><p>AI adoption announcements act as market signals about future efficiency, cost structure, innovation capability, and reputational risk. AI-assisted adoption mainly sends an efficiency and complementarity signal, while AI-writing adoption sends a mixed signal: cost reduction potential may be offset by credibility risk and possible reader backlash.</p></div><div class="card"><span class="tag red">Audience Attention</span><h3>Public-Interest Proxy</h3><p>Google Trends spikes are treated as public-interest signals, not sentiment. The measure captures whether AI adoption announcements attract unusual audience attention around the event window.</p></div><div class="card"><span class="tag blue">Human-AI Complementarity</span><h3>Role Boundary Matters</h3><p>The market reaction should be stronger when AI is framed as supporting journalists and weaker when AI is framed as replacing editorial judgment or news authorship.</p></div></div></section>
-      <section id="hypotheses"><div class="section-title"><h2>3. Hypothesis Tracker</h2><p>Expected coefficient signs and comparisons</p></div><div class="hypothesis-grid"><article class="hypothesis-card"><div class="hypothesis-top"><span class="badge">H1</span><span class="direction">Overall effect</span></div><h4>Adoption types produce different reactions</h4><p>Stock market reactions differ across no AI adoption, AI-assisted adoption, and AI-writing adoption.</p></article><article class="hypothesis-card"><div class="hypothesis-top"><span class="badge">H2</span><span class="direction">Beta Assist &gt; 0</span></div><h4>AI-assisted adoption is positive</h4><p>AI-assisted adoption generates a more positive market reaction than no AI adoption.</p></article><article class="hypothesis-card"><div class="hypothesis-top"><span class="badge">H3</span><span class="direction">Base &lt; Beta Writing &lt; Beta Assist</span></div><h4>AI writing is weaker than AI assistance</h4><p>AI-writing adoption generates a more positive reaction than no AI adoption, but a weaker reaction than AI-assisted adoption.</p></article></div></section>
-      <section id="design"><div class="section-title"><h2>4. Quasi-Experimental Design</h2><p>Real firm announcements instead of scenario experiments</p></div><div class="table-wrap"><table><thead><tr><th>Analysis</th><th>Unit</th><th>Main Comparison</th><th>Main Output</th></tr></thead><tbody><tr><td><b>Event Study</b></td><td>AI adoption announcements</td><td>AI-assisted adoption vs. AI-writing adoption</td><td>AR, CAR[0,+1], CAR[-1,+1], CAR[-3,+3]</td></tr><tr><td><b>Multi-valued DID</b></td><td>Firm-day panel</td><td>AI-assisted, AI-writing, and no AI firms</td><td>Assist x Post, Writing x Post</td></tr><tr><td><b>Matched DID</b></td><td>Matched firm-day panel</td><td>Comparable treated and control firms</td><td>PSM</td></tr><tr><td><b>Audience Evidence</b></td><td>Event-platform panel</td><td>Reader reactions linked to CAR</td><td>Google Trends interest proxy</td></tr></tbody></table></div><div class="card" style="margin-top:16px"><h3>DID Specification</h3><p><code>AR<sub>it</sub> = beta<sub>1</sub>(AI_Assist<sub>i</sub> x Post<sub>it</sub>) + beta<sub>2</sub>(AI_Writing<sub>i</sub> x Post<sub>it</sub>) + beta<sub>3</sub>AI_Assist<sub>i</sub> + beta<sub>4</sub>AI_Writing<sub>i</sub> + beta<sub>5</sub>Post<sub>it</sub> + gamma X<sub>it</sub> + mu<sub>i</sub> + lambda<sub>t</sub> + epsilon<sub>it</sub></code></p><p><code>AI_Assist<sub>i</sub></code> and <code>AI_Writing<sub>i</sub></code> are compared against no AI adoption. <code>Post<sub>it</sub></code> captures the period after the announcement, and the main-effect terms separate baseline adoption-type differences from post-announcement treatment effects. Firm and date fixed effects absorb stable firm characteristics and common market shocks.</p></div></section>
-      <section id="evidence"><div class="section-title"><h2>5. Model-Free Evidence</h2><p>Raw patterns to show before regression results</p></div><div class="grid cols-2"><div class="chart-card"><h3>Expected CAR Pattern</h3><p>Replace the conceptual values with estimated means and medians after data collection.</p><div class="bars"><div class="bar-row"><span>No AI</span><div class="bar-bg"><div class="bar-fill" style="width:38%"></div></div><b>Base</b></div><div class="bar-row"><span>AI-assisted</span><div class="bar-bg"><div class="bar-fill" style="width:72%"></div></div><b>+</b></div><div class="bar-row"><span>AI-written</span><div class="bar-bg"><div class="bar-fill" style="width:56%"></div></div><b>mid</b></div></div><div class="axis-note">This is a dashboard sketch, not an empirical estimate.</div></div><div class="chart-card"><h3>Evidence to Report</h3><div class="table-wrap"><table><tbody><tr><td>Table M1</td><td>Mean and median CAR by AI adoption type</td></tr><tr><td>Figure M1</td><td>Average AR and CAR around the event date</td></tr><tr><td>Figure M2</td><td>Google Trends interest index around the AI adoption event date</td></tr><tr><td>Table M2</td><td>Mean GoogleTrendsInterest by AI adoption type and event window</td></tr></tbody></table></div></div></div></section>
-      <section id="data"><div class="section-title"><h2>6. Data and Variables</h2><p>Event, financial, text, and audience data joined into a panel</p></div><div class="pipeline"><div class="pipe"><b>1. AI Events</b><span>Press releases, investor relations material, annual reports, and first major news coverage.</span></div><div class="pipe"><b>2. Event Screening</b><span>Exclude earnings, M&amp;A, CEO turnover, lawsuits, and other confounding events.</span></div><div class="pipe"><b>3. Type Coding</b><span>No AI, AI-assisted adoption, and AI-writing adoption.</span></div><div class="pipe"><b>4. Market Data</b><span>Daily stock returns, market returns, trading volume, and volatility.</span></div><div class="pipe"><b>5. Audience Measures</b><span>Google Trends as a public-interest proxy.</span></div><div class="pipe"><b>6. Theory Measures</b><span>Source credibility, perceived accountability, machine heuristic, and signaling effect.</span></div></div><div class="grid cols-2" style="margin-top:16px"><div class="card"><h3>Dependent Variables</h3><p>AR, CAR[0,+1], CAR[-1,+1], CAR[-3,+3], abnormal trading volume, and abnormal volatility.</p></div><div class="card"><h3>Key Mechanism Variables</h3><p>SourceCredibility, MachineHeuristic, SignalingEffect, GoogleTrendsInterest, AI_Assist, and AI_Writing.</p></div></div></section>
-      <section id="robustness"><div class="section-title"><h2>7. Endogeneity and Robustness</h2><p>Threats to identification and planned responses</p></div><div class="table-wrap"><table><thead><tr><th>Threat</th><th>Problem</th><th>Response</th></tr></thead><tbody><tr><td>Selection bias</td><td>AI adopters may differ from non-adopters before treatment.</td><td>PSM-based matched DID.</td></tr><tr><td>Confounding events</td><td>Other major firm events may occur near the AI announcement.</td><td>News screening in [-3,+3], exclusion rules, and event dummies.</td></tr><tr><td>Theory measurement</td><td>Source credibility and machine heuristic are latent constructs.</td><td>Use multiple text indicators and platform-level validation.</td></tr><tr><td>Reverse causality</td><td>Distressed firms may adopt AI as a response to poor performance.</td><td>Prior return controls, pre-trends, lead terms, and distressed-firm exclusions.</td></tr><tr><td>Parallel trends</td><td>DID requires comparable pre-treatment trajectories.</td><td>Event-time DID and pre-treatment coefficient tests.</td></tr><tr><td>Measurement error</td><td>AI type and theory-mechanism coding may be noisy.</td><td>Multiple coders, Cohen's kappa, dictionaries, and supervised coding.</td></tr></tbody></table></div></section>
-      <div class="footer">Standalone responsive HTML dashboard. No external libraries required.</div>
+
+      <section>
+        <div class="grid cols-4">
+          <div class="card kpi blue"><div class="num">300</div><div class="label">Master Frame</div><div class="desc">100 Fortune firms × 3 fiscal report years. All unavailable rows are retained as missing.</div></div>
+          <div class="card kpi green"><div class="num">273</div><div class="label">Primary Text Sample</div><div class="desc">Firm-year observations with successfully collected 10-K text.</div></div>
+          <div class="card kpi amber"><div class="num">270</div><div class="label">Balanced Panel</div><div class="desc">90 firms with complete 2023, 2024, and 2025 observed 10-K coverage.</div></div>
+          <div class="card kpi red"><div class="num">27</div><div class="label">Final Audit Rows</div><div class="desc">Non-success firm-years retained as missing values and documented row-by-row.</div></div>
+        </div>
+      </section>
+
+      <section id="sample">
+        <div class="section-title"><h2>1. Final Sample Decision</h2><p>Master frame retained; text analysis uses observed 10-K rows</p></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Sample</th><th>Unit</th><th>Rule</th><th>Firms</th><th>Firm-years</th><th>Use</th></tr></thead>
+            <tbody>
+              <tr><td><b>MASTER_FRAME</b></td><td>Firm-year</td><td>All Fortune 2025 Top 100 firms × report years 2023–2025</td><td>100</td><td>300</td><td>Coverage and audit denominator</td></tr>
+              <tr><td><b>PRIMARY_TEXT_SAMPLE</b></td><td>Firm-year</td><td><code>download_status = success</code> in final manifest</td><td>92</td><td>273</td><td>Main AI disclosure intensity analysis</td></tr>
+              <tr><td><b>BALANCED_TEXT_PANEL</b></td><td>Firm-year</td><td>Firms with complete 2023–2025 observed 10-K text</td><td>90</td><td>270</td><td>Robustness and within-firm analysis</td></tr>
+              <tr><td><b>FINAL_AUDIT</b></td><td>Firm-year</td><td><code>download_status != success</code></td><td>10</td><td>27</td><td>Missingness and sensitivity documentation</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="coverage">
+        <div class="section-title"><h2>2. Collection Coverage</h2><p>Final manifest status after recollecting major missing cases</p></div>
+        <div class="grid cols-2">
+          <div class="chart-card">
+            <h3>Final 300-row manifest status</h3>
+            <div class="bars">
+              <div class="bar-row"><b>Success</b><div class="bar-bg"><div class="bar-fill green" style="width:91%"></div></div><span>273</span></div>
+              <div class="bar-row"><b>Failed</b><div class="bar-bg"><div class="bar-fill red" style="width:8%"></div></div><span>24</span></div>
+              <div class="bar-row"><b>Missing</b><div class="bar-bg"><div class="bar-fill amber" style="width:1%"></div></div><span>3</span></div>
+            </div>
+            <p class="axis-note">Success rate: 273 / 300 = 91.0%. Failed/missing rows remain in the master frame as missing values.</p>
+          </div>
+          <div class="chart-card">
+            <h3>Recollection effect</h3>
+            <div class="bars">
+              <div class="bar-row"><b>Original success</b><div class="bar-bg"><div class="bar-fill" style="width:87%"></div></div><span>261</span></div>
+              <div class="bar-row"><b>Recovered</b><div class="bar-bg"><div class="bar-fill green" style="width:80%"></div></div><span>12 / 15</span></div>
+              <div class="bar-row"><b>Still missing</b><div class="bar-bg"><div class="bar-fill amber" style="width:20%"></div></div><span>3 / 15</span></div>
+            </div>
+            <p class="axis-note">Older SEC submissions lookup recovered 12 major missing firm-years from JPM, META, BAC, C, GS, WFC, and MS.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="audit">
+        <div class="section-title"><h2>3. Final Audit Classification</h2><p>All non-success rows are treated as missing values, not silently dropped</p></div>
+        <div class="grid cols-3">
+          <div class="card amber"><span class="tag amber">24 firm-years</span><h3>Missing all three years</h3><p>Eight Fortune Top 100 firms have no collected 10-K across 2023–2025. They remain in the master frame and are coded as <code>missing_all_three_years</code>.</p></div>
+          <div class="card red"><span class="tag red">3 firm-years</span><h3>Missing after SEC recent + files lookup</h3><p>Galaxy Digital 2023/2024 and Ingram Micro Holding 2023 remain unresolved after older submissions lookup. They are coded as <code>missing_after_recent_and_files_lookup</code>.</p></div>
+          <div class="card blue"><span class="tag blue">Policy</span><h3>Missingness rule</h3><p>The analysis frame is not redefined to remove unavailable firms. Missing firm-years are preserved for transparent coverage reporting and sensitivity checks.</p></div>
+        </div>
+        <div class="table-wrap" style="margin-top:16px">
+          <table>
+            <thead><tr><th>Category</th><th>Rows</th><th>Unique firms</th><th>Firms</th><th>Analysis treatment</th></tr></thead>
+            <tbody>
+              <tr><td><b>missing_all_three_years</b></td><td>24</td><td>8</td><td>State Farm Insurance; New York Life Insurance; Nationwide; Publix Super Markets; USAA; TIAA; Liberty Mutual Insurance Group; Massachusetts Mutual Life</td><td>Missing values retained in master frame</td></tr>
+              <tr><td><b>missing_after_recent_and_files_lookup</b></td><td>3</td><td>2</td><td>Galaxy Digital; Ingram Micro Holding</td><td>Manual form-type / issuer-status review; retained as missing</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="metrics">
+        <div class="section-title"><h2>4. AI Disclosure Metrics</h2><p>Current metric basis in the final manifest</p></div>
+        <div class="grid cols-3">
+          <div class="card"><span class="tag green">Available now</span><h3>AI keyword count</h3><p>Each successful 10-K text has <code>ai_keyword_count</code> and <code>ai_keyword_per_10k_words</code> from the collection pipeline.</p></div>
+          <div class="card"><span class="tag blue">Primary DV/IV candidate</span><h3>AI disclosure intensity</h3><p>The working measure is normalized AI keyword frequency per 10,000 words at the firm-year level.</p></div>
+          <div class="card"><span class="tag violet">Next extension</span><h3>Contextual disclosure coding</h3><p>Later refinements can split AI mentions into opportunity, risk, governance, product, operation, and regulatory contexts.</p></div>
+        </div>
+      </section>
+
+      <section id="workflow">
+        <div class="section-title"><h2>5. Data Pipeline Status</h2><p>Reproducible workflow from collection to final sample</p></div>
+        <div class="grid cols-4">
+          <div class="step"><strong>1. Top 100 collection</strong><span>Four 25-firm chunks collected 300 firm-year manifest rows.</span></div>
+          <div class="step"><strong>2. Merge artifacts</strong><span>Chunk artifacts were merged into combined manifest and audit CSVs.</span></div>
+          <div class="step"><strong>3. Major missing recollection</strong><span>15 major missing rows were rechecked using SEC recent and older files.</span></div>
+          <div class="step"><strong>4. Final sample decision</strong><span>Final manifest, audit, classification, and sample-decision CSVs define the analysis frame.</span></div>
+        </div>
+      </section>
+
+      <section id="files">
+        <div class="section-title"><h2>6. Repository Data Files</h2><p>Canonical CSV outputs used by this dashboard</p></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Purpose</th><th>File</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>Final manifest</td><td><a href="data/processed/fortune2025_top100_10k_final_manifest.csv">data/processed/fortune2025_top100_10k_final_manifest.csv</a></td><td>300 rows</td></tr>
+              <tr><td>Final audit</td><td><a href="data/audit/fortune2025_top100_10k_final_audit.csv">data/audit/fortune2025_top100_10k_final_audit.csv</a></td><td>27 rows</td></tr>
+              <tr><td>Audit classification</td><td><a href="data/audit/fortune2025_top100_10k_final_audit_classification.csv">data/audit/fortune2025_top100_10k_final_audit_classification.csv</a></td><td>27 rows classified</td></tr>
+              <tr><td>Sample decision</td><td><a href="data/processed/fortune2025_top100_10k_final_sample_decision.csv">data/processed/fortune2025_top100_10k_final_sample_decision.csv</a></td><td>Canonical sample definition</td></tr>
+              <tr><td>Update summary</td><td><a href="data/audit/fortune2025_top100_10k_final_update_summary.csv">data/audit/fortune2025_top100_10k_final_update_summary.csv</a></td><td>Final SHA and status counts</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="footer">Fortune 2025 Top 100 10-K AI disclosure project · Final sample dashboard · Last updated from repository CSV outputs</div>
     </main>
   </div>
-  <script>document.querySelectorAll("nav a").forEach((link)=>{link.addEventListener("click",()=>{document.querySelectorAll("nav a").forEach((item)=>{item.style.background=""});link.style.background="#eef2ff"})});</script>
 </body>
 </html>
