@@ -1,0 +1,140 @@
+name: Run 10-K AI Topic Model
+
+on:
+  workflow_dispatch:
+    inputs:
+      n_topics:
+        description: "Number of topics for clustering"
+        required: true
+        default: "12"
+        type: string
+      window_size:
+        description: "Sentence window size around each AI keyword sentence"
+        required: true
+        default: "1"
+        type: string
+      max_windows_per_doc:
+        description: "Maximum AI windows per document; 0 means no cap"
+        required: true
+        default: "0"
+        type: string
+      model_name:
+        description: "SentenceTransformer model name"
+        required: true
+        default: "sentence-transformers/all-MiniLM-L6-v2"
+        type: string
+      tfidf_fallback_only:
+        description: "Use TF-IDF KMeans only instead of downloading Sentence-BERT"
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "true"
+          - "false"
+      commit_outputs_to_repo:
+        description: "Commit topic model outputs to repository"
+        required: true
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  run-topic-model:
+    name: Run AI-related 10-K topic model
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas scikit-learn
+          if [ "${{ inputs.tfidf_fallback_only }}" = "false" ]; then
+            pip install sentence-transformers
+          fi
+
+      - name: Validate input CSV and text files
+        run: |
+          test -f data/processed/fortune2025_top100_10k_report_linked_text_sample.csv
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+          root = Path('.')
+          rows = list(csv.DictReader(open('data/processed/fortune2025_top100_10k_report_linked_text_sample.csv', encoding='utf-8')))
+          missing = [r.get('local_text_path') for r in rows if r.get('local_text_path') and not (root / r.get('local_text_path')).exists()]
+          print(f"Rows: {len(rows)}")
+          print(f"Missing text files: {len(missing)}")
+          if missing:
+              print('\n'.join(missing[:20]))
+              raise SystemExit('Some local text files referenced in CSV are missing from repository checkout')
+          PY
+
+      - name: Run topic model
+        run: |
+          ARGS="--input-csv data/processed/fortune2025_top100_10k_report_linked_text_sample.csv --n-topics ${{ inputs.n_topics }} --window-size ${{ inputs.window_size }} --max-windows-per-doc ${{ inputs.max_windows_per_doc }} --model-name ${{ inputs.model_name }}"
+          if [ "${{ inputs.tfidf_fallback_only }}" = "true" ]; then
+            ARGS="$ARGS --tfidf-fallback-only"
+          fi
+          python scripts/run_10k_ai_bert_topic_model.py $ARGS
+
+      - name: Validate topic outputs
+        run: |
+          test -f data/processed/10k_ai_topics/ai_mention_windows.csv
+          test -f data/processed/10k_ai_topics/ai_topic_assignments.csv
+          test -f data/processed/10k_ai_topics/firm_year_topic_distribution.csv
+          test -f data/processed/10k_ai_topics/topic_terms.csv
+          test -f data/audit/10k_ai_topics/topic_model_summary.csv
+          echo "Topic model summary:"
+          cat data/audit/10k_ai_topics/topic_model_summary.csv
+          echo "Topic terms sample:"
+          head -n 20 data/processed/10k_ai_topics/topic_terms.csv
+
+      - name: Commit topic outputs to repository
+        if: ${{ inputs.commit_outputs_to_repo == 'true' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            data/processed/10k_ai_topics/ai_mention_windows.csv \
+            data/processed/10k_ai_topics/ai_topic_assignments.csv \
+            data/processed/10k_ai_topics/firm_year_topic_distribution.csv \
+            data/processed/10k_ai_topics/topic_terms.csv \
+            data/audit/10k_ai_topics/topic_model_summary.csv
+          if git diff --cached --quiet; then
+            echo "No topic output changes to commit."
+          else
+            git commit -m "data: add 10-k ai topic model outputs"
+            git push
+          fi
+
+      - name: Upload topic outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: 10k-ai-topic-model-outputs
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            data/processed/10k_ai_topics/ai_mention_windows.csv
+            data/processed/10k_ai_topics/ai_topic_assignments.csv
+            data/processed/10k_ai_topics/firm_year_topic_distribution.csv
+            data/processed/10k_ai_topics/topic_terms.csv
+            data/audit/10k_ai_topics/topic_model_summary.csv
