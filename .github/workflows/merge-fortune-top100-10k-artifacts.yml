@@ -28,9 +28,17 @@ on:
         required: true
         default: "fortune2025-top100-10k-chunk-4"
         type: string
+      commit_to_repo:
+        description: "Commit merged CSV outputs to the repository under data/"
+        required: true
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
 
 permissions:
-  contents: read
+  contents: write
   actions: read
 
 defaults:
@@ -46,6 +54,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -105,6 +115,22 @@ jobs:
           wc -l "data/audit/fortune2025_top100_10k_run_${{ inputs.source_run_id }}_combined_audit.csv"
           echo "Merge summary:"
           cat "data/audit/fortune2025_top100_10k_run_${{ inputs.source_run_id }}_merge_summary.csv"
+
+      - name: Commit merged CSV outputs to repository
+        if: ${{ inputs.commit_to_repo == 'true' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            "data/processed/fortune2025_top100_10k_run_${{ inputs.source_run_id }}_combined_manifest.csv" \
+            "data/audit/fortune2025_top100_10k_run_${{ inputs.source_run_id }}_combined_audit.csv" \
+            "data/audit/fortune2025_top100_10k_run_${{ inputs.source_run_id }}_merge_summary.csv"
+          if git diff --cached --quiet; then
+            echo "No merged CSV changes to commit."
+          else
+            git commit -m "data: add merged fortune top100 10-k outputs for run ${{ inputs.source_run_id }}"
+            git push
+          fi
 
       - name: Upload merged outputs
         uses: actions/upload-artifact@v4
