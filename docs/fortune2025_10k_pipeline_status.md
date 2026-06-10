@@ -1,30 +1,33 @@
-# Fortune 2025 Top 100 10-K Collection Pipeline Status
+# Fortune 2025 Top 100 10-K Pipeline Status
 
-## 1. Purpose
+## 1. Project Boundary
 
-This document records the current status of the Fortune 2025 top 100 SEC 10-K collection work that was first implemented in `Vulter3653/x_scrapper` and should also be reflected in this repository for Korea University project continuity.
-
-The goal is not to claim that the full 10-K HTML corpus has already been collected. The current verified status is that a reproducible collection pipeline, manifest structure, and audit trail have been prepared. Actual 10-K HTML report files still require execution in an SEC-accessible environment or the provision of SEC source/cache files.
-
-## 2. Source Repository
-
-Primary implementation repository:
+This document records the Fortune 2025 top 100 SEC 10-K collection status for the `korea_uni` repository.
 
 ```text
-https://github.com/Vulter3653/x_scrapper
+Repository: https://github.com/Vulter3653/korea_uni
+Project boundary: independent Korea University research-project repository
 ```
 
-Related implemented files in the source repository:
+Important distinction:
 
 ```text
-scripts/collect_fortune2025_10k_reports.py
-.github/workflows/collect-fortune-10k.yml
-config/fortune2025_top100_10k_report_index.csv
-data/audit/fortune2025_top100_10k_report_audit.csv
-README.md
-PROJECT_HISTORY.md
-TROUBLESHOOTING_AND_DEBUGGING_LOG.md
+Vulter3653/korea_uni and Vulter3653/x_scrapper are separate projects.
+This document should not describe korea_uni as a mirror, submodule, or dependent copy of x_scrapper.
 ```
+
+The current goal is not to claim that the full 10-K HTML corpus has already been collected. The verified status is that the project has documented the intended collection scope, SEC source flow, manifest/audit logic, current access limitation, and required next execution step.
+
+## 2. korea_uni Internal Links
+
+| Item | korea_uni path | Status |
+| --- | --- | --- |
+| Main repository | `https://github.com/Vulter3653/korea_uni` | Active |
+| README | `README.md` | Updated |
+| 10-K status note | `docs/fortune2025_10k_pipeline_status.md` | Active |
+| Future manifest location | `config/fortune2025_top100_10k_report_index.csv` | To be added when generated inside korea_uni |
+| Future audit location | `data/audit/fortune2025_top100_10k_report_audit.csv` | To be added when generated inside korea_uni |
+| Future SEC cache location | `data/sec_cache/` | Optional rerun support |
 
 ## 3. Collection Scope
 
@@ -49,71 +52,67 @@ Expected manifest rows:
 SEC source flow:
 
 ```text
-1. https://www.sec.gov/files/company_tickers.json
-2. https://data.sec.gov/submissions/CIK##########.json
-3. https://www.sec.gov/Archives/edgar/data/{cik}/{accession}/{primaryDocument}
+1. SEC company tickers source
+2. SEC company submissions metadata by CIK
+3. SEC Archives primary 10-K filing document URL
 ```
 
-## 4. Current Verified Status
-
-The pipeline has been created and the GitHub Actions workflow has been added in the source repository. The latest workflow produced manifest and audit artifacts, but the current execution environment returned SEC access failures. Therefore, the artifact currently contains the manifest/audit outputs, not the downloaded 10-K HTML report files.
+## 4. Current Verified Status in korea_uni
 
 Current status summary:
 
 | Item | Status |
 | --- | --- |
-| Fortune 2025 top 100 target definition | Completed |
-| 2025/2024/2023 target year definition | Completed |
-| SEC CIK/submissions/archive URL flow | Implemented |
-| Manifest/index CSV generation | Implemented |
-| Failure audit CSV generation | Implemented |
-| GitHub Actions workflow | Implemented |
-| Actual 10-K HTML report download | Not completed in current environment |
+| Fortune 2025 top 100 target definition | Documented |
+| 2025/2024/2023 target year definition | Documented |
+| SEC source flow | Documented |
+| Manifest/index CSV inside korea_uni | Not yet generated in this repository |
+| Failure audit CSV inside korea_uni | Not yet generated in this repository |
+| GitHub Actions workflow inside korea_uni | Not yet added in this repository |
+| Actual 10-K HTML report download | Not completed in this repository |
 
 Important wording:
 
 ```text
-The current repository state should be described as "10-K collection pipeline and audit structure completed," not as "10-K corpus collection completed."
+The current korea_uni state should be described as "10-K collection scope and status documented," not as "10-K corpus collection completed."
 ```
 
-## 5. GitHub Actions Record from Source Repository
+## 5. Current Limitation
 
-Recorded workflow runs:
+Actual SEC 10-K HTML report files are not yet present in this repository. The next implementation step must either:
 
 ```text
-Failed run: 27269441863
-Successful reinforced run: 27269654293
-Artifact: fortune-2025-top100-10k-reports
+1. Add and run a korea_uni-local collector script and workflow in an SEC-accessible environment; or
+2. Provide SEC source/cache files and generate the manifest/audit locally within korea_uni.
 ```
 
-Current artifact status:
+Recommended future cache structure:
 
 ```text
-Contains manifest/audit files only. It does not yet contain the actual 10-K HTML reports.
+data/sec_cache/company_tickers.json
+data/sec_cache/submissions/CIK##########.json
 ```
 
-Recorded source commits:
+Recommended future output structure:
 
 ```text
-33c899e Add Fortune top 100 10-K collection workflow
-24351b1 Record SEC 10-K source access failures
-ad66490 Update Fortune 2025 top 100 10-K report index
-df5cd43 Document SEC 10-K access status
+config/fortune2025_top100_10k_report_index.csv
+data/audit/fortune2025_top100_10k_report_audit.csv
+data/sec_10k_reports/{rank}_{company_slug}_{year}_10k.html
 ```
 
 ## 6. Required Next Step
 
-The next step is to rerun the same pipeline in an SEC-accessible environment or provide SEC source/cache files.
+The next step for `korea_uni` is implementation within this repository, not reliance on another repository.
 
 Recommended execution route:
 
 ```text
-1. Run the collector locally, on a school/research network, in Colab, or in another cloud environment.
-2. If direct SEC access still fails, provide cached SEC files:
-   - data/sec_cache/company_tickers.json
-   - data/sec_cache/submissions/CIK##########.json
-3. Reuse the existing manifest/audit format.
-4. Confirm whether each failure is caused by 403, 404, 429, URL-generation error, or file-save error.
+1. Add a korea_uni-local SEC 10-K collector script.
+2. Generate the 300-row Fortune 2025 top 100 x 3-year manifest in korea_uni.
+3. Generate a failure/status audit file in korea_uni.
+4. If SEC access is blocked, record the failure stage and HTTP status.
+5. Rerun in an SEC-accessible environment or inject SEC cache files.
 ```
 
 ## 7. Defensive Research Statement
@@ -121,5 +120,5 @@ Recommended execution route:
 Use the following statement when reporting the current status:
 
 ```text
-At this stage, the project has not completed the full 10-K HTML corpus. Instead, it has completed a reproducible Fortune 2025 top 100 10-K collection pipeline, manifest generation process, and audit logging structure. Due to SEC access restrictions in the current execution environment, actual 10-K HTML files must be downloaded by rerunning the same script in an SEC-accessible environment or by injecting SEC company ticker/submissions cache files.
+At this stage, korea_uni has documented the Fortune 2025 top 100 10-K collection scope, expected manifest structure, SEC source flow, and current corpus limitation. The full 10-K HTML corpus is not yet completed inside this repository. Completion requires a korea_uni-local rerun in an SEC-accessible environment or SEC cache injection followed by manifest and audit generation.
 ```
