@@ -1,0 +1,107 @@
+name: Recollect Major Missing 10-K Reports
+
+on:
+  workflow_dispatch:
+    inputs:
+      sec_user_agent:
+        description: "SEC User-Agent contact string"
+        required: true
+        default: "Seung Hyun Choi korea_uni research shch3653@g.skku.edu"
+        type: string
+      request_sleep_seconds:
+        description: "Delay between SEC requests in seconds"
+        required: false
+        default: "0.50"
+        type: string
+      commit_csv_to_repo:
+        description: "Commit recollection manifest/audit CSV to repository"
+        required: true
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  recollect-major-missing:
+    name: Recollect major missing 10-K filings
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Show recollection scope
+        run: |
+          echo "Target: major missing Fortune 2025 Top 100 10-K cases"
+          echo "Expected firm-year targets: 15"
+          echo "Seed: config/fortune2025_top100_missing_major_10k_seed.csv"
+          echo "Script: scripts/recollect_major_missing_10k_reports.py"
+
+      - name: Run major missing 10-K recollector
+        env:
+          SEC_USER_AGENT: ${{ inputs.sec_user_agent }}
+          SEC_REQUEST_SLEEP_SECONDS: ${{ inputs.request_sleep_seconds }}
+        run: |
+          python scripts/recollect_major_missing_10k_reports.py
+
+      - name: Validate recollection outputs
+        run: |
+          test -f data/processed/fortune2025_top100_major_missing_recollection_manifest.csv
+          test -f data/audit/fortune2025_top100_major_missing_recollection_audit.csv
+          echo "Manifest lines including header:"
+          wc -l data/processed/fortune2025_top100_major_missing_recollection_manifest.csv
+          echo "Audit lines including header:"
+          wc -l data/audit/fortune2025_top100_major_missing_recollection_audit.csv
+          python - <<'PY'
+          import csv
+          from collections import Counter
+          rows = list(csv.DictReader(open('data/processed/fortune2025_top100_major_missing_recollection_manifest.csv', encoding='utf-8')))
+          counts = Counter(row.get('recollection_status') for row in rows)
+          print(f"Rows: {len(rows)}")
+          print(f"Status counts: {dict(counts)}")
+          if len(rows) != 15:
+              raise SystemExit(f"Expected 15 recollection rows, found {len(rows)}")
+          PY
+
+      - name: Commit recollection CSV outputs to repository
+        if: ${{ inputs.commit_csv_to_repo == 'true' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            data/processed/fortune2025_top100_major_missing_recollection_manifest.csv \
+            data/audit/fortune2025_top100_major_missing_recollection_audit.csv
+          if git diff --cached --quiet; then
+            echo "No recollection CSV changes to commit."
+          else
+            git commit -m "data: add major missing 10-k recollection outputs"
+            git push
+          fi
+
+      - name: Upload recollection outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: fortune2025-top100-major-missing-10k-recollection
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            data/processed/fortune2025_top100_major_missing_recollection_manifest.csv
+            data/audit/fortune2025_top100_major_missing_recollection_audit.csv
+            data/raw/sec_10k_html/major_missing/**
+            data/processed/sec_10k_text/major_missing/**
