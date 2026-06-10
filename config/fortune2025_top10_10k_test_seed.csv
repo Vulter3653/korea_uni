@@ -1,0 +1,11 @@
+fortune_rank_2025,company_name,ticker,cik,cik_padded,sec_title,notes
+1,Walmart,WMT,104169,0000104169,Walmart Inc.,Fortune 2025 Top 10 smoke-test seed
+2,Amazon,AMZN,1018724,0001018724,AMAZON COM INC,Fortune 2025 Top 10 smoke-test seed
+3,UnitedHealth Group,UNH,731766,0000731766,UNITEDHEALTH GROUP INC,Fortune 2025 Top 10 smoke-test seed
+4,Apple,AAPL,320193,0000320193,Apple Inc.,Fortune 2025 Top 10 smoke-test seed
+5,CVS Health,CVS,64803,0000064803,CVS HEALTH Corp,Fortune 2025 Top 10 smoke-test seed
+6,Berkshire Hathaway,BRK-B,1067983,0001067983,BERKSHIRE HATHAWAY INC,Class B ticker used for SEC mapping
+7,Alphabet,GOOGL,1652044,0001652044,Alphabet Inc.,Class A ticker used for SEC mapping
+8,ExxonMobil,XOM,34088,0000034088,EXXON MOBIL CORP,Fortune 2025 Top 10 smoke-test seed
+9,McKesson,MCK,927653,0000927653,MCKESSON CORP,Fortune 2025 Top 10 smoke-test seed
+10,Cencora,COR,1140859,0001140859,"Cencora, Inc.",Formerly AmerisourceBergen; current ticker COR
