@@ -4,8 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       sec_user_agent:
-        description: "SEC User-Agent contact string. Example: Name project email@example.com"
+        description: "SEC User-Agent contact string"
         required: true
+        default: "Seung Hyun Choi korea_uni research shch3653@g.skku.edu"
         type: string
       request_sleep_seconds:
         description: "Delay between SEC requests in seconds"
