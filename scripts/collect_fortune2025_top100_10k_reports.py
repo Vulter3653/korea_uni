@@ -1,33 +1,17 @@
 #!/usr/bin/env python3
 """Chunked collector for Fortune 2025 Top 100 10-K filings.
 
-Purpose
--------
-Collect the full Fortune 2025 Top 100 10-K corpus in four safe parallel
-chunks after the Top 10 smoke test has succeeded.
-
-Recommended full-collection settings
-------------------------------------
+Recommended settings:
 - parallel_workers = 4
 - SEC_REQUEST_SLEEP_SECONDS = 0.50
 - CHUNK_SIZE = 25 firms
-- Target report years = 2023, 2024, 2025
-- Expected rows = 100 firms x 3 years = 300
+- target report years = 2023, 2024, 2025
 
-Required seed file
-------------------
-Default path:
-    config/fortune2025_top100_10k_collection_seed.csv
+Input seed:
+- config/fortune2025_top100_10k_collection_seed.csv
 
-Required columns:
-    fortune_rank_2025,company_name,ticker,cik,cik_padded,sec_title,notes
-
-Outputs per chunk
------------------
-- data/processed/fortune2025_top100_10k_chunk_XX_manifest.csv
-- data/audit/fortune2025_top100_10k_chunk_XX_audit.csv
-- data/raw/sec_10k_html/top100/chunk_XX/<TICKER>/<YEAR>_<TICKER>_10k.html
-- data/processed/sec_10k_text/top100/chunk_XX/<TICKER>/<YEAR>_<TICKER>_10k.txt
+The collector handles non-public or unresolved firms by writing documented
+manifest/audit rows instead of attempting SEC requests when CIK is missing.
 """
 
 from __future__ import annotations
@@ -135,11 +119,7 @@ def ensure_dirs() -> None:
 
 def read_seed(path: Path) -> List[SeedCompany]:
     if not path.exists():
-        raise FileNotFoundError(
-            f"Seed file not found: {path}. "
-            "Create config/fortune2025_top100_10k_collection_seed.csv with columns "
-            "fortune_rank_2025,company_name,ticker,cik,cik_padded,sec_title,notes before running full collection."
-        )
+        raise FileNotFoundError(f"Seed file not found: {path}")
     with path.open("r", encoding="utf-8-sig", newline="") as f:
         reader = csv.DictReader(f)
         required = {"fortune_rank_2025", "company_name", "ticker", "cik", "cik_padded", "sec_title", "notes"}
@@ -173,16 +153,11 @@ def sec_get_bytes(url: str) -> bytes:
         return resp.read()
 
 
-def normalize_accession(accession: str) -> str:
-    return accession.replace("-", "")
-
-
 def archives_urls(cik: str, accession: str, primary_document: str) -> Tuple[str, str]:
     cik_no_zero = str(int(cik))
-    accession_no_dash = normalize_accession(accession)
+    accession_no_dash = accession.replace("-", "")
     filing_url = f"{SEC_ARCHIVES_BASE}/{cik_no_zero}/{accession_no_dash}/"
-    document_url = f"{filing_url}{primary_document}"
-    return filing_url, document_url
+    return filing_url, f"{filing_url}{primary_document}"
 
 
 def clean_html_to_text(raw_html: str) -> str:
@@ -252,6 +227,28 @@ def base_kwargs(company: SeedCompany, target_year: int) -> Dict[str, Any]:
     )
 
 
+def append_unavailable_rows(manifest_rows: List[ManifestRow], company: SeedCompany) -> None:
+    reason = company.notes or "missing_cik_or_non_public_company"
+    for target_year in TARGET_YEARS:
+        manifest_rows.append(ManifestRow(
+            **base_kwargs(company, target_year),
+            form_type="",
+            filing_date="",
+            report_date="",
+            accession_number="",
+            primary_document="",
+            sec_filing_url="",
+            sec_document_url="",
+            local_html_path="",
+            local_text_path="",
+            download_status="unavailable",
+            failure_reason=reason,
+            total_words=0,
+            ai_keyword_count=0,
+            ai_keyword_per_10k_words=0.0,
+        ))
+
+
 def collect() -> int:
     ensure_dirs()
     seed = read_seed(SEED_PATH)
@@ -270,6 +267,10 @@ def collect() -> int:
     manifest_rows: List[ManifestRow] = []
 
     for company in companies:
+        if not company.cik_padded.strip():
+            append_unavailable_rows(manifest_rows, company)
+            continue
+
         submissions_url = f"{SEC_BASE}/CIK{company.cik_padded}.json"
         try:
             submissions = sec_get_json(submissions_url)
@@ -329,12 +330,13 @@ def collect() -> int:
             accession = selected.get("accessionNumber", "")
             primary_document = selected.get("primaryDocument", "")
             filing_url, document_url = archives_urls(company.cik, accession, primary_document)
-            html_dir = HTML_ROOT / company.ticker
-            text_dir = TEXT_ROOT / company.ticker
+            ticker_dir = company.ticker or f"rank_{company.fortune_rank_2025}"
+            html_dir = HTML_ROOT / ticker_dir
+            text_dir = TEXT_ROOT / ticker_dir
             html_dir.mkdir(parents=True, exist_ok=True)
             text_dir.mkdir(parents=True, exist_ok=True)
-            html_path = html_dir / f"{target_year}_{company.ticker}_10k.html"
-            text_path = text_dir / f"{target_year}_{company.ticker}_10k.txt"
+            html_path = html_dir / f"{target_year}_{ticker_dir}_10k.html"
+            text_path = text_dir / f"{target_year}_{ticker_dir}_10k.txt"
 
             try:
                 raw = sec_get_bytes(document_url)
@@ -377,10 +379,10 @@ def collect() -> int:
 
     expected = len(companies) * len(TARGET_YEARS)
     success = sum(1 for row in rows if row.get("download_status") == "success")
-    failed = expected - success
+    non_success = expected - success
     print(f"Expected rows in chunk: {expected}")
     print(f"Success rows in chunk: {success}")
-    print(f"Failed/missing rows in chunk: {failed}")
+    print(f"Non-success rows in chunk: {non_success}")
     print(f"Manifest: {MANIFEST_PATH.relative_to(REPO_ROOT)}")
     print(f"Audit: {AUDIT_PATH.relative_to(REPO_ROOT)}")
     return 0 if rows and len(rows) == expected else 1
