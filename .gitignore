@@ -1,0 +1,30 @@
+# Local environments
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Node/build artifacts
+node_modules/
+dist/
+build/
+.next/
+.cache/
+
+# OS/editor/temp
+.DS_Store
+*.tmp
+*.temp
+*~
+*.bak
+
+# Logs
+*.log
