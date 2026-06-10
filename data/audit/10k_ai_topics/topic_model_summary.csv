@@ -1,0 +1,6 @@
+metric,value,note
+input_rows,273,data/processed/fortune2025_top100_10k_report_linked_text_sample.csv
+ai_mention_windows,4254,window_size=1
+firm_years_with_ai_windows,246,Firm-years with at least one AI mention window
+n_topics,4,requested=4
+model_used,sentence_bert_kmeans:sentence-transformers/all-MiniLM-L6-v2,Sentence-BERT preferred; TF-IDF fallback when unavailable
