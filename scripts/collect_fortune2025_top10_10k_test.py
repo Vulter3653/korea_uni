@@ -24,7 +24,7 @@ Notes
 SEC guidance requires a descriptive User-Agent. Set SEC_USER_AGENT before
 running, for example:
 
-    export SEC_USER_AGENT="Seung Hyun Choi korea_uni research contact@example.com"
+    export SEC_USER_AGENT="Seung Hyun Choi korea_uni research shch3653@g.skku.edu"
 
 The script uses reportDate/periodOfReport as the target report-year basis.
 This is intentional because a fiscal-year 2025 10-K may be filed in 2026.
@@ -57,7 +57,7 @@ SEC_ARCHIVES_BASE = "https://www.sec.gov/Archives/edgar/data"
 REQUEST_SLEEP_SECONDS = float(os.getenv("SEC_REQUEST_SLEEP_SECONDS", "0.25"))
 USER_AGENT = os.getenv(
     "SEC_USER_AGENT",
-    "korea_uni academic research 10-K collector; contact: set SEC_USER_AGENT env var",
+    "Seung Hyun Choi korea_uni research shch3653@g.skku.edu",
 )
 
 AI_PATTERNS = [
